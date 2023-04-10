@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:phara_driver/screens/auth/signup_screen.dart';
 
 import '../../plugins/my_location.dart';
 import '../../utils/colors.dart';
@@ -51,9 +50,9 @@ class _LandingScreenState extends State<LandingScreen> {
                   height: 75,
                 ),
                 Center(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
                       ButtonWidget(
                         label: 'Login',
                         onPressed: () {
@@ -65,94 +64,9 @@ class _LandingScreenState extends State<LandingScreen> {
                       const SizedBox(
                         height: 20,
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const SizedBox(
-                            width: 50,
-                            child: Divider(
-                              color: Colors.white,
-                              thickness: 2,
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          TextRegular(
-                              text: 'or', fontSize: 18, color: Colors.white),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          const SizedBox(
-                            width: 50,
-                            child: Divider(
-                              color: Colors.white,
-                              thickness: 2,
-                            ),
-                          ),
-                        ],
-                      ),
-                      TextButton(
-                        onPressed: (() {
-                          Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                  builder: (context) => SignupScreen()));
-                        }),
-                        child: TextBold(
-                            text: 'Signup', fontSize: 18, color: Colors.white),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              color: grey.withOpacity(0.75),
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: GestureDetector(
-                                onTap: () {},
-                                child: Image.asset(
-                                  'assets/images/fblogo.png',
-                                  height: 35,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 25,
-                          ),
-                          Container(
-                            decoration: BoxDecoration(
-                              color: grey.withOpacity(0.75),
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: GestureDetector(
-                                onTap: () async {
-                                  googleLogin();
-                                },
-                                child: Image.asset(
-                                  'assets/images/googlelogo.png',
-                                  height: 35,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
+                    ])),
                 const SizedBox(
-                  height: 60,
+                  height: 200,
                 ),
               ],
             ),

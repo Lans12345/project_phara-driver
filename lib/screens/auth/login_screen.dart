@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:phara_driver/screens/auth/signup_screen.dart';
 
 import '../../utils/colors.dart';
 import '../../widgets/button_widget.dart';
@@ -71,25 +70,25 @@ class LoginScreen extends StatelessWidget {
                 const SizedBox(
                   height: 25,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    TextRegular(
-                        text: "New to PHara?",
-                        fontSize: 12,
-                        color: Colors.white),
-                    TextButton(
-                      onPressed: (() {
-                        Navigator.of(context).pushReplacement(MaterialPageRoute(
-                            builder: (context) => SignupScreen()));
-                      }),
-                      child: TextBold(
-                          text: "Signup Now",
-                          fontSize: 14,
-                          color: Colors.white),
-                    ),
-                  ],
-                ),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.center,
+                //   children: [
+                //     TextRegular(
+                //         text: "New to PHara?",
+                //         fontSize: 12,
+                //         color: Colors.white),
+                //     TextButton(
+                //       onPressed: (() {
+                //         Navigator.of(context).pushReplacement(MaterialPageRoute(
+                //             builder: (context) => SignupScreen()));
+                //       }),
+                //       child: TextBold(
+                //           text: "Signup Now",
+                //           fontSize: 14,
+                //           color: Colors.white),
+                //     ),
+                //   ],
+                // ),
               ],
             ),
           ),

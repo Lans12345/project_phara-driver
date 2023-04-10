@@ -432,14 +432,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.1.1"
-  get_storage:
-    dependency: "direct main"
-    description:
-      name: get_storage
-      sha256: bbb75a5b94519c0e49bce07bd2f097fa4565a8f07d7e2f85d32bd061e5a8358a
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.1.6"
   google_api_headers:
     dependency: transitive
     description:
@@ -680,22 +672,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.8.2"
-  path_provider:
-    dependency: transitive
-    description:
-      name: path_provider
-      sha256: "7f141b48e3131bfda0f6343475f0521ebb50becf81dc56eec3dec0cd9eef8766"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.6.1"
-  platform:
-    dependency: transitive
-    description:
-      name: platform
-      sha256: "2d03e4330ae22fc7fc0dd38c1fc6d0a9dc7ff10d7deea6dbb2583f7e5c053453"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.2.1"
   plugin_platform_interface:
     dependency: transitive
     description:
@@ -942,5 +918,5 @@ packages:
     source: hosted
     version: "4.1.2"
 sdks:
-  dart: ">=2.19.6 <3.0.0"
+  dart: ">=2.18.0 <3.0.0"
   flutter: ">=3.3.0"

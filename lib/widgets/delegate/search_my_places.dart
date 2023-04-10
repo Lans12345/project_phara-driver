@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:geocoding/geocoding.dart';
-import 'package:get_storage/get_storage.dart';
 
 import '../../services/place_service.dart';
 
@@ -12,8 +11,6 @@ class LocationsSearch extends SearchDelegate<Suggestion> {
 
   final sessionToken;
   late PlaceApiProvider apiClient;
-
-  final box = GetStorage();
 
   @override
   List<Widget> buildActions(BuildContext context) {
