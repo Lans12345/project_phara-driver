@@ -101,6 +101,8 @@ class _HomeScreenState extends State<HomeScreen> {
               child: DrawerWidget(),
             ),
             appBar: AppBar(
+              title:
+                  TextRegular(text: 'Home', fontSize: 24, color: Colors.black),
               foregroundColor: grey,
               backgroundColor: Colors.white,
               actions: [
