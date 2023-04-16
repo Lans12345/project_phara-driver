@@ -7,13 +7,9 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:phara_driver/screens/pages/bookmark_page.dart';
 
-import 'package:uuid/uuid.dart';
-
 import '../plugins/my_location.dart';
 import '../utils/colors.dart';
-import '../widgets/book_bottomsheet_widget.dart';
 import '../widgets/button_widget.dart';
-import '../widgets/delegate/search_my_places.dart';
 import '../widgets/drawer_widget.dart';
 import '../widgets/text_widget.dart';
 import 'pages/messages_tab.dart';
@@ -71,26 +67,6 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 FloatingActionButton(
                     backgroundColor: Colors.white,
-                    onPressed: (() {}),
-                    child: const Icon(
-                      Icons.pin_drop_rounded,
-                      color: Colors.red,
-                    )),
-                const SizedBox(
-                  height: 15,
-                ),
-                FloatingActionButton(
-                    backgroundColor: Colors.white,
-                    onPressed: (() {}),
-                    child: const Icon(
-                      Icons.push_pin_rounded,
-                      color: grey,
-                    )),
-                const SizedBox(
-                  height: 15,
-                ),
-                FloatingActionButton(
-                    backgroundColor: Colors.white,
                     onPressed: (() {
                       mapController?.animateCamera(
                           CameraUpdate.newCameraPosition(CameraPosition(
@@ -113,7 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           builder: (context) => const BookmarksPage()));
                     }),
                     child: const Icon(
-                      Icons.collections_bookmark_outlined,
+                      Icons.send,
                       color: grey,
                     )),
               ],
@@ -124,28 +100,7 @@ class _HomeScreenState extends State<HomeScreen> {
             appBar: AppBar(
               foregroundColor: grey,
               backgroundColor: Colors.white,
-              title: GestureDetector(
-                onTap: () async {
-                  final sessionToken = const Uuid().v4();
-
-                  await showSearch(
-                      context: context,
-                      delegate: LocationsSearch(sessionToken));
-                },
-                child: TextFormField(
-                  enabled: false,
-                  decoration: const InputDecoration.collapsed(
-                    hintText: "Search Location",
-                    hintStyle: TextStyle(fontFamily: 'QBold', color: grey),
-                    border: InputBorder.none,
-                  ),
-                ),
-              ),
               actions: [
-                IconButton(
-                  onPressed: (() {}),
-                  icon: const Icon(Icons.pin_drop_outlined),
-                ),
                 b.Badge(
                   position: b.BadgePosition.custom(start: -1, top: 3),
                   badgeContent: TextRegular(
@@ -159,6 +114,21 @@ class _HomeScreenState extends State<HomeScreen> {
                           builder: (context) => const MessagesTab()));
                     }),
                     icon: const Icon(Icons.message_outlined),
+                  ),
+                ),
+                b.Badge(
+                  position: b.BadgePosition.custom(start: -1, top: 3),
+                  badgeContent: TextRegular(
+                    text: '1',
+                    fontSize: 12,
+                    color: Colors.white,
+                  ),
+                  child: IconButton(
+                    onPressed: (() {
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(
+                          builder: (context) => const MessagesTab()));
+                    }),
+                    icon: const Icon(Icons.notifications),
                   ),
                 ),
                 const SizedBox(
@@ -193,26 +163,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           width: 175,
                           radius: 100,
                           opacity: 1,
-                          color: Colors.red,
-                          label: 'Clear pin',
-                          onPressed: (() {})),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      ButtonWidget(
-                          width: 175,
-                          radius: 100,
-                          opacity: 1,
                           color: Colors.green,
-                          label: 'Book a ride',
-                          onPressed: (() {
-                            showModalBottomSheet(
-                                isScrollControlled: true,
-                                context: context,
-                                builder: ((context) {
-                                  return BookBottomSheetWidget();
-                                }));
-                          })),
+                          label: 'View passenger',
+                          onPressed: (() {})),
                       const SizedBox(
                         height: 25,
                       ),

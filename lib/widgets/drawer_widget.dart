@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:phara_driver/screens/pages/reports_page.dart';
 import 'package:phara_driver/widgets/text_widget.dart';
 import 'package:phara_driver/widgets/textfield_widget.dart';
 
 import '../screens/auth/login_screen.dart';
+import '../screens/home_screen.dart';
 import '../screens/pages/aboutus_page.dart';
 import '../screens/pages/contactus_page.dart';
 import '../screens/pages/messages_tab.dart';
@@ -45,8 +47,24 @@ class DrawerWidget extends StatelessWidget {
                     accountEmail: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            const Icon(
+                              Icons.star,
+                              color: Colors.amber,
+                              size: 14,
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            TextRegular(
+                                text: '5.0', fontSize: 12, color: Colors.amber),
+                          ],
+                        ),
                         const SizedBox(
-                          height: 10,
+                          height: 5,
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -150,24 +168,6 @@ class DrawerWidget extends StatelessWidget {
                         const SizedBox(
                           height: 5,
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            const Icon(
-                              Icons.email,
-                              color: Colors.grey,
-                              size: 15,
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            TextRegular(
-                              text: data['email'],
-                              fontSize: 14,
-                              color: Colors.grey,
-                            ),
-                          ],
-                        ),
                       ],
                     ),
                     accountName: Padding(
@@ -196,8 +196,8 @@ class DrawerWidget extends StatelessWidget {
                       color: Colors.grey,
                     ),
                     onTap: () {
-                      // Navigator.of(context).pushReplacement(MaterialPageRoute(
-                      //     builder: (context) => HomeScreen()));
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(
+                          builder: (context) => const HomeScreen()));
                     },
                   ),
                   ListTile(
@@ -209,7 +209,19 @@ class DrawerWidget extends StatelessWidget {
                     ),
                     onTap: () {
                       Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) => MessagesTab()));
+                          builder: (context) => const MessagesTab()));
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.stacked_line_chart_sharp),
+                    title: TextRegular(
+                      text: 'Earnings report',
+                      fontSize: 12,
+                      color: Colors.grey,
+                    ),
+                    onTap: () {
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(
+                          builder: (context) => const ReportsPage()));
                     },
                   ),
                   ListTile(
