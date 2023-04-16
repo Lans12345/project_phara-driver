@@ -6,6 +6,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:phara_driver/screens/pages/bookmark_page.dart';
+import 'package:phara_driver/widgets/toast_widget.dart';
 
 import '../plugins/my_location.dart';
 import '../utils/colors.dart';
@@ -56,6 +57,8 @@ class _HomeScreenState extends State<HomeScreen> {
   GoogleMapController? mapController;
 
   Set<Marker> markers = {};
+
+  var _value = false;
 
   @override
   Widget build(BuildContext context) {
@@ -134,6 +137,40 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(
                   width: 10,
+                ),
+                Container(
+                  padding: const EdgeInsets.only(right: 20),
+                  width: 50,
+                  child: SwitchListTile(
+                    value: _value,
+                    onChanged: (value) {
+                      setState(() {
+                        _value = value;
+                        if (_value == true) {
+                          // status = 'on';
+                          // FirebaseFirestore.instance
+                          //     .collection('Drivers')
+                          //     .doc(FirebaseAuth.instance.currentUser!.uid)
+                          //     .update({
+                          //   'isActive': true,
+                          // });
+                          showToast(
+                              'Status: Active\nPassengers can now book a ride');
+                        } else {
+                          // status = 'off';
+
+                          // FirebaseFirestore.instance
+                          //     .collection('Drivers')
+                          //     .doc(FirebaseAuth.instance.currentUser!.uid)
+                          //     .update({
+                          //   'isActive': false,
+                          // });
+                          showToast(
+                              'Status: Inactive\nPassengers will not be able to book a ride');
+                        }
+                      });
+                    },
+                  ),
                 ),
               ],
             ),
