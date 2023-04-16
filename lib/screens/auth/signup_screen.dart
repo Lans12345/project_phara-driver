@@ -67,7 +67,7 @@ class SignupScreen extends StatelessWidget {
                 TextFieldWidget(
                     textCapitalization: TextCapitalization.none,
                     inputType: TextInputType.streetAddress,
-                    label: 'Email',
+                    label: 'Username',
                     controller: emailController),
                 const SizedBox(
                   height: 10,

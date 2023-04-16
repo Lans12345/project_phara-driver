@@ -42,8 +42,8 @@ class LoginScreen extends StatelessWidget {
                 ),
                 TextFieldWidget(
                     textCapitalization: TextCapitalization.none,
-                    hint: 'Email',
-                    label: 'Email',
+                    hint: 'Username',
+                    label: 'Username',
                     controller: emailController),
                 const SizedBox(
                   height: 10,
