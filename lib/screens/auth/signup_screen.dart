@@ -132,12 +132,14 @@ class SignupScreen extends StatelessWidget {
   register(context) async {
     try {
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: emailController.text, password: passwordController.text);
+          email: '${emailController.text}@driver.phara',
+          password: passwordController.text);
 
       signup(nameController.text, numberController.text, addressController.text,
           emailController.text);
       await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: emailController.text, password: passwordController.text);
+          email: '${emailController.text}@driver.phara',
+          password: passwordController.text);
       showToast("Registered Succesfully!");
       Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => const SplashToHomeScreen()));

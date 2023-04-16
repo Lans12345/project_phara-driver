@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 Future signup(name, number, address, email) async {
   final docUser = FirebaseFirestore.instance
-      .collection('Users')
+      .collection('Drivers')
       .doc(FirebaseAuth.instance.currentUser!.uid);
 
   final json = {
@@ -12,8 +12,11 @@ Future signup(name, number, address, email) async {
     'address': address,
     'email': email,
     'id': docUser.id,
+    'stars': 0,
+    'ratings': [],
     'history': [],
     'bookmarks': [],
+    'location': {'lat': 0.00, 'long': 0.00}
   };
 
   await docUser.set(json);
