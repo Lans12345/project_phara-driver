@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:phara_driver/screens/pages/bookmark_page.dart';
 import 'package:phara_driver/widgets/toast_widget.dart';
 
 import '../plugins/my_location.dart';
@@ -81,7 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     }),
                     child: const Icon(
                       Icons.my_location_rounded,
-                      color: grey,
+                      color: Colors.red,
                     )),
                 const SizedBox(
                   height: 15,
@@ -89,12 +88,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 FloatingActionButton(
                     backgroundColor: Colors.white,
                     onPressed: (() {
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) => const BookmarksPage()));
+                      // Navigator.of(context).pushReplacement(MaterialPageRoute(
+                      //     builder: (context) => const BookmarksPage()));
                     }),
                     child: const Icon(
                       Icons.send,
-                      color: grey,
+                      color: Colors.red,
                     )),
               ],
             ),
