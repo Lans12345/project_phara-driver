@@ -9,6 +9,7 @@ import 'package:phara_driver/screens/pages/bookmark_page.dart';
 
 import '../plugins/my_location.dart';
 import '../utils/colors.dart';
+import '../widgets/book_bottomsheet_widget.dart';
 import '../widgets/button_widget.dart';
 import '../widgets/drawer_widget.dart';
 import '../widgets/text_widget.dart';
@@ -145,6 +146,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   myLocationEnabled: false,
                   markers: markers,
                   mapType: MapType.normal,
+                  zoomControlsEnabled: false,
                   initialCameraPosition: camPosition,
                   onMapCreated: (GoogleMapController controller) {
                     _controller.complete(controller);
@@ -165,7 +167,14 @@ class _HomeScreenState extends State<HomeScreen> {
                           opacity: 1,
                           color: Colors.green,
                           label: 'View passenger',
-                          onPressed: (() {})),
+                          onPressed: (() {
+                            showModalBottomSheet(
+                                isScrollControlled: true,
+                                context: context,
+                                builder: ((context) {
+                                  return BookBottomSheetWidget();
+                                }));
+                          })),
                       const SizedBox(
                         height: 25,
                       ),

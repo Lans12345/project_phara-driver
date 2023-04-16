@@ -15,7 +15,7 @@ class BookBottomSheetWidget extends StatelessWidget {
     return SingleChildScrollView(
       reverse: true,
       child: SizedBox(
-        height: 500,
+        height: 560,
         child: Padding(
           padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
           child: Column(
@@ -24,7 +24,7 @@ class BookBottomSheetWidget extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  TextBold(text: 'Driver', fontSize: 15, color: grey),
+                  TextBold(text: 'Passenger', fontSize: 15, color: grey),
                   IconButton(
                     onPressed: (() {
                       Navigator.pop(context);
@@ -58,13 +58,7 @@ class BookBottomSheetWidget extends StatelessWidget {
                       TextBold(
                           text: 'Name: Lance Olana', fontSize: 15, color: grey),
                       TextRegular(
-                          text: 'Vehicle: Sniper 150',
-                          fontSize: 14,
-                          color: grey),
-                      TextRegular(
-                          text: 'Rating: 3.5 ★',
-                          fontSize: 14,
-                          color: Colors.amber),
+                          text: '0909014355', fontSize: 14, color: grey),
                     ],
                   ),
                 ],
@@ -164,7 +158,7 @@ class BookBottomSheetWidget extends StatelessWidget {
                     radius: 100,
                     opacity: 1,
                     color: Colors.green,
-                    label: 'Book now',
+                    label: 'Accept booking',
                     onPressed: (() {
                       Navigator.pop(context);
                       showModalBottomSheet(
@@ -173,6 +167,57 @@ class BookBottomSheetWidget extends StatelessWidget {
                           builder: ((context) {
                             return const TrackBookingBottomSheetWidget();
                           }));
+                    })),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Center(
+                child: ButtonWidget(
+                    width: 250,
+                    radius: 100,
+                    opacity: 1,
+                    color: Colors.red,
+                    label: 'Decline booking',
+                    onPressed: (() {
+                      showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                                title: const Text(
+                                  'Decline confirmation',
+                                  style: TextStyle(
+                                      fontFamily: 'QBold',
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                content: const Text(
+                                  'Are you sure you want to Decline this booking?',
+                                  style: TextStyle(fontFamily: 'QRegular'),
+                                ),
+                                actions: <Widget>[
+                                  MaterialButton(
+                                    onPressed: () =>
+                                        Navigator.of(context).pop(true),
+                                    child: const Text(
+                                      'Close',
+                                      style: TextStyle(
+                                          fontFamily: 'QRegular',
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  MaterialButton(
+                                    onPressed: () async {
+                                      Navigator.of(context).pop();
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: const Text(
+                                      'Continue',
+                                      style: TextStyle(
+                                          fontFamily: 'QRegular',
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                ],
+                              ));
                     })),
               ),
             ],
