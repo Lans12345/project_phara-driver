@@ -35,19 +35,6 @@ class _HomeScreenState extends State<HomeScreen> {
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
 
-  final List<LatLng> _markerLocations = [
-    const LatLng(37.4220, -122.0841),
-    const LatLng(37.4275, -122.1697),
-    const LatLng(37.7749, -122.4194),
-    const LatLng(37.3382, -121.8863),
-    const LatLng(37.4833, -122.2167),
-    const LatLng(37.3352, -121.8811),
-    const LatLng(37.3541, -121.9552),
-    const LatLng(37.5407, -122.2924),
-    const LatLng(37.8044, -122.2711),
-    const LatLng(37.8716, -122.2727),
-  ];
-
   late String currentAddress;
 
   late double lat = 0;
@@ -250,10 +237,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   myLocationMarker(double lat, double lang) async {
     Marker mylocationMarker = Marker(
-        onDrag: (value) {
-          print(value);
-        },
-        draggable: true,
         markerId: const MarkerId('currentLocation'),
         infoWindow: const InfoWindow(
           title: 'Your Current Location',
@@ -261,34 +244,7 @@ class _HomeScreenState extends State<HomeScreen> {
         icon: BitmapDescriptor.defaultMarker,
         position: LatLng(lat, lang));
 
-    // Marker driverMarker = Marker(
-    //     onDragEnd: (value) {
-    //       print(value);
-    //     },
-    //     draggable: true,
-    //     markerId: const MarkerId('driver1'),
-    //     infoWindow: InfoWindow(
-    //       onTap: () {
-    //         showModalBottomSheet(
-    //             isScrollControlled: true,
-    //             context: context,
-    //             builder: ((context) {
-    //               return BookBottomSheetWidget();
-    //             }));
-    //       },
-    //       title: 'Lance Olana',
-    //       snippet: '09090104355',
-    //     ),
-    //     icon: await BitmapDescriptor.fromAssetImage(
-    //       const ImageConfiguration(
-    //         size: Size(12, 12),
-    //       ),
-    //       'assets/images/driver.png',
-    //     ),
-    //     position: const LatLng(8.472385879216784, 124.64719623327255));
-
     markers.add(mylocationMarker);
-    // markers.add(driverMarker);
   }
 
   getLocation() async {
