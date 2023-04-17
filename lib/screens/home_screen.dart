@@ -264,7 +264,7 @@ class _HomeScreenState extends State<HomeScreen> {
       hasLoaded = true;
     });
 
-    Timer.periodic(const Duration(seconds: 120), (timer) {
+    Timer.periodic(const Duration(minutes: 3), (timer) {
       StreamSubscription<Position> positionStream =
           Geolocator.getPositionStream().listen(
         (position) {
