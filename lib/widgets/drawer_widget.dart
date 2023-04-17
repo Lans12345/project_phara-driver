@@ -21,7 +21,7 @@ class DrawerWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Stream<DocumentSnapshot> userData = FirebaseFirestore.instance
-        .collection('Users')
+        .collection('Drivers')
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .snapshots();
     return StreamBuilder<DocumentSnapshot>(
@@ -35,6 +35,8 @@ class DrawerWidget extends StatelessWidget {
             return const Center(child: CircularProgressIndicator());
           }
           dynamic data = snapshot.data;
+
+          double rating = data['ratings'].length / data['stars'];
           return SizedBox(
             child: Drawer(
               child: ListView(
@@ -51,16 +53,25 @@ class DrawerWidget extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.star,
-                              color: Colors.amber,
+                              color: data['ratings'].length == 0
+                                  ? Colors.grey
+                                  : Colors.amber,
                               size: 14,
                             ),
                             const SizedBox(
                               width: 10,
                             ),
                             TextRegular(
-                                text: '5.0', fontSize: 12, color: Colors.amber),
+                              text: data['ratings'].length == 0
+                                  ? 'No ratings'
+                                  : rating.toStringAsFixed(2),
+                              fontSize: 12,
+                              color: data['ratings'].length == 0
+                                  ? Colors.grey
+                                  : Colors.amber,
+                            ),
                           ],
                         ),
                         const SizedBox(
@@ -130,17 +141,18 @@ class DrawerWidget extends StatelessWidget {
                                                       if (numberController
                                                               .text !=
                                                           '') {
-                                                        numberController
-                                                            .clear();
                                                         await FirebaseFirestore
                                                             .instance
-                                                            .collection('Users')
+                                                            .collection(
+                                                                'Drivers')
                                                             .doc(data['id'])
                                                             .update({
                                                           'number':
                                                               numberController
                                                                   .text
                                                         });
+                                                        numberController
+                                                            .clear();
                                                         Navigator.pop(context);
                                                       }
                                                     }),
