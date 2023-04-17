@@ -263,5 +263,23 @@ class _HomeScreenState extends State<HomeScreen> {
           '${place.street}, ${place.subLocality}, ${place.locality}';
       hasLoaded = true;
     });
+
+    Timer.periodic(const Duration(seconds: 120), (timer) {
+      StreamSubscription<Position> positionStream =
+          Geolocator.getPositionStream().listen(
+        (position) {
+          FirebaseFirestore.instance
+              .collection('Drivers')
+              .doc(FirebaseAuth.instance.currentUser!.uid)
+              .update({
+            'location': {'lat': position.latitude, 'long': position.longitude},
+          });
+        },
+        onError: (error) {
+          print('Error getting location stream: $error');
+        },
+        cancelOnError: true,
+      );
+    });
   }
 }
