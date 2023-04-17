@@ -101,7 +101,8 @@ class LoginScreen extends StatelessWidget {
   login(context) async {
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: emailController.text, password: passwordController.text);
+          email: '${emailController.text}@driver.phara',
+          password: passwordController.text);
       Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => const SplashToHomeScreen()));
     } on Exception catch (e) {

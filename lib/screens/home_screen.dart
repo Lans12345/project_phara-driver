@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:badges/badges.dart' as b;
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
@@ -58,6 +60,11 @@ class _HomeScreenState extends State<HomeScreen> {
   Set<Marker> markers = {};
 
   var _value = false;
+
+  final Stream<DocumentSnapshot> userData = FirebaseFirestore.instance
+      .collection('Drivers')
+      .doc(FirebaseAuth.instance.currentUser!.uid)
+      .snapshots();
 
   @override
   Widget build(BuildContext context) {
@@ -139,40 +146,52 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(
                   width: 10,
                 ),
-                Container(
-                  padding: const EdgeInsets.only(right: 20),
-                  width: 50,
-                  child: SwitchListTile(
-                    value: _value,
-                    onChanged: (value) {
-                      setState(() {
-                        _value = value;
-                        if (_value == true) {
-                          // status = 'on';
-                          // FirebaseFirestore.instance
-                          //     .collection('Drivers')
-                          //     .doc(FirebaseAuth.instance.currentUser!.uid)
-                          //     .update({
-                          //   'isActive': true,
-                          // });
-                          showToast(
-                              'Status: Active\nPassengers can now book a ride');
-                        } else {
-                          // status = 'off';
-
-                          // FirebaseFirestore.instance
-                          //     .collection('Drivers')
-                          //     .doc(FirebaseAuth.instance.currentUser!.uid)
-                          //     .update({
-                          //   'isActive': false,
-                          // });
-                          showToast(
-                              'Status: Inactive\nPassengers will not be able to book a ride');
-                        }
-                      });
-                    },
-                  ),
-                ),
+                StreamBuilder<DocumentSnapshot>(
+                    stream: userData,
+                    builder:
+                        (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+                      if (!snapshot.hasData) {
+                        return const Center(child: Text('Loading'));
+                      } else if (snapshot.hasError) {
+                        return const Center(
+                            child: Text('Something went wrong'));
+                      } else if (snapshot.connectionState ==
+                          ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      dynamic data = snapshot.data;
+                      return Container(
+                        padding: const EdgeInsets.only(right: 20),
+                        width: 50,
+                        child: SwitchListTile(
+                          value: data['isActive'],
+                          onChanged: (value) {
+                            setState(() {
+                              _value = value;
+                              if (_value == true) {
+                                FirebaseFirestore.instance
+                                    .collection('Drivers')
+                                    .doc(FirebaseAuth.instance.currentUser!.uid)
+                                    .update({
+                                  'isActive': true,
+                                });
+                                showToast(
+                                    'Status: Active\nPassengers can now book a ride');
+                              } else {
+                                FirebaseFirestore.instance
+                                    .collection('Drivers')
+                                    .doc(FirebaseAuth.instance.currentUser!.uid)
+                                    .update({
+                                  'isActive': false,
+                                });
+                                showToast(
+                                    'Status: Inactive\nPassengers will not be able to book a ride');
+                              }
+                            });
+                          },
+                        ),
+                      );
+                    }),
               ],
             ),
             body: Stack(

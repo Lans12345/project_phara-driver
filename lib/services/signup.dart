@@ -16,7 +16,8 @@ Future signup(name, number, address, email) async {
     'ratings': [],
     'history': [],
     'bookmarks': [],
-    'location': {'lat': 0.00, 'long': 0.00}
+    'location': {'lat': 0.00, 'long': 0.00},
+    'isActive': true
   };
 
   await docUser.set(json);
