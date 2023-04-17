@@ -264,22 +264,17 @@ class _HomeScreenState extends State<HomeScreen> {
       hasLoaded = true;
     });
 
-    StreamSubscription<Position> positionStream =
-        Geolocator.getPositionStream().listen(
-      (position) {
-        Timer.periodic(const Duration(seconds: 180), (timer) {
-          FirebaseFirestore.instance
-              .collection('Drivers')
-              .doc(FirebaseAuth.instance.currentUser!.uid)
-              .update({
-            'location': {'lat': position.latitude, 'long': position.longitude},
-          });
+    Timer.periodic(const Duration(minutes: 5), (timer) {
+      Geolocator.getCurrentPosition().then((position) {
+        FirebaseFirestore.instance
+            .collection('Drivers')
+            .doc(FirebaseAuth.instance.currentUser!.uid)
+            .update({
+          'location': {'lat': position.latitude, 'long': position.longitude},
         });
-      },
-      onError: (error) {
-        print('Error getting location stream: $error');
-      },
-      cancelOnError: true,
-    );
+      }).catchError((error) {
+        print('Error getting location: $error');
+      });
+    });
   }
 }
