@@ -9,6 +9,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:phara_driver/screens/pages/messages_tab.dart';
+import 'package:phara_driver/screens/pages/trips_page.dart';
 import 'package:phara_driver/widgets/toast_widget.dart';
 
 import '../data/user_stream.dart';
@@ -84,12 +85,25 @@ class _HomeScreenState extends State<HomeScreen> {
                 FloatingActionButton(
                     backgroundColor: Colors.white,
                     onPressed: (() {
-                      // Navigator.of(context).pushReplacement(MaterialPageRoute(
-                      //     builder: (context) => const BookmarksPage()));
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(
+                          builder: (context) => const HomeScreen()));
                     }),
                     child: const Icon(
-                      Icons.send,
-                      color: Colors.red,
+                      Icons.refresh,
+                      color: grey,
+                    )),
+                const SizedBox(
+                  height: 15,
+                ),
+                FloatingActionButton(
+                    backgroundColor: Colors.white,
+                    onPressed: (() {
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(
+                          builder: (context) => const TripsPage()));
+                    }),
+                    child: const Icon(
+                      Icons.collections_bookmark_outlined,
+                      color: grey,
                     )),
               ],
             ),
