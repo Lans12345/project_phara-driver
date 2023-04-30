@@ -15,8 +15,6 @@ import 'package:phara_driver/widgets/toast_widget.dart';
 import '../data/user_stream.dart';
 import '../plugins/my_location.dart';
 import '../utils/colors.dart';
-import '../widgets/book_bottomsheet_widget.dart';
-import '../widgets/button_widget.dart';
 import '../widgets/drawer_widget.dart';
 import '../widgets/text_widget.dart';
 
@@ -305,31 +303,51 @@ class _HomeScreenState extends State<HomeScreen> {
                     });
                   },
                 ),
-                Center(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      ButtonWidget(
-                          width: 175,
-                          radius: 100,
-                          opacity: 1,
-                          color: Colors.green,
-                          label: 'View passenger',
-                          onPressed: (() {
-                            showModalBottomSheet(
-                                isScrollControlled: true,
-                                context: context,
-                                builder: ((context) {
-                                  return BookBottomSheetWidget();
-                                }));
-                          })),
-                      const SizedBox(
-                        height: 25,
+                Padding(
+                  padding: const EdgeInsets.only(top: 20),
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: grey.withOpacity(0.5),
+                        borderRadius: BorderRadius.circular(50),
                       ),
-                    ],
+                      height: 40,
+                      width: 200,
+                      child: Center(
+                        child: TextRegular(
+                            text: '0 bookings',
+                            fontSize: 18,
+                            color: Colors.white),
+                      ),
+                    ),
                   ),
-                )
+                ),
+                // Center(
+                //   child: Column(
+                //     crossAxisAlignment: CrossAxisAlignment.center,
+                //     mainAxisAlignment: MainAxisAlignment.end,
+                //     children: [
+                //       ButtonWidget(
+                //           width: 175,
+                //           radius: 100,
+                //           opacity: 1,
+                //           color: Colors.green,
+                //           label: 'View passenger',
+                //           onPressed: (() {
+                //             showModalBottomSheet(
+                //                 isScrollControlled: true,
+                //                 context: context,
+                //                 builder: ((context) {
+                //                   return BookBottomSheetWidget();
+                //                 }));
+                //           })),
+                //       const SizedBox(
+                //         height: 25,
+                //       ),
+                //     ],
+                //   ),
+                // )
               ],
             ),
           )
