@@ -687,6 +687,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                         'Accept Booking',
                                                                     onPressed:
                                                                         () async {
+                                                                      Navigator.pop(
+                                                                          context1);
                                                                       await FirebaseFirestore
                                                                           .instance
                                                                           .collection(
@@ -700,31 +702,39 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                             false
                                                                       });
 
-                                                                       await FirebaseFirestore
-                                                                  .instance
-                                                                  .collection(
-                                                                      'Users')
-                                                                  .doc(data.docs[
-                                                                          index]
-                                                                      [
-                                                                      'userId'])
-                                                                  .update({
-                                                                'notif': FieldValue
-                                                                    .arrayUnion([
-                                                                  {
-                                                                    'notif':
-                                                                        'Youre booking was accepted!',
-                                                                    'read':
-                                                                        false,
-                                                                    'date':
-                                                                        DateTime
-                                                                            .now(),
-                                                                  }
-                                                                ]),
-                                                              });
-                                                                      
-                                                                      Navigator.pop(
-                                                                          context);
+                                                                      await FirebaseFirestore
+                                                                          .instance
+                                                                          .collection(
+                                                                              'Bookings')
+                                                                          .doc(data
+                                                                              .docs[
+                                                                                  index]
+                                                                              .id)
+                                                                          .update({
+                                                                        'status':
+                                                                            'Accepted'
+                                                                      });
+
+                                                                      await FirebaseFirestore
+                                                                          .instance
+                                                                          .collection(
+                                                                              'Users')
+                                                                          .doc(data.docs[index]
+                                                                              [
+                                                                              'userId'])
+                                                                          .update({
+                                                                        'notif':
+                                                                            FieldValue.arrayUnion([
+                                                                          {
+                                                                            'notif':
+                                                                                'Youre booking was accepted! Driver on the way',
+                                                                            'read':
+                                                                                false,
+                                                                            'date':
+                                                                                DateTime.now(),
+                                                                          }
+                                                                        ]),
+                                                                      });
 
                                                                       // To Do: Booking - to show booking modal sheet
                                                                     })
