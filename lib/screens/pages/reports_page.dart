@@ -27,6 +27,8 @@ class _ReportsPageState extends State<ReportsPage> {
   bool hasLoaded = false;
 
   double total = 0;
+  double today = 0;
+  double average = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -112,17 +114,10 @@ class _ReportsPageState extends State<ReportsPage> {
                           ),
                           Padding(
                             padding: const EdgeInsets.only(
-                                left: 30, right: 30, bottom: 10),
-                            child: TextRegular(
-                                text: 'Average: ₱500',
-                                fontSize: 16,
-                                color: Colors.black),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
                                 left: 30, right: 30, bottom: 20),
                             child: TextRegular(
-                                text: 'Today: ₱500',
+                                text:
+                                    'Today: ₱${NumberFormat('#,##0.00', 'en_US').format(today)}',
                                 fontSize: 16,
                                 color: Colors.black),
                           ),
@@ -175,8 +170,14 @@ class _ReportsPageState extends State<ReportsPage> {
         .get()
         .then((QuerySnapshot querySnapshot) {
       for (var doc in querySnapshot.docs) {
-        print(doc['fare']);
+        DateTime dateTime = doc['dateTime'].toDate();
+
         setState(() {
+          if (dateTime.year == DateTime.now().year &&
+              dateTime.month == DateTime.now().month &&
+              dateTime.day == DateTime.now().day) {
+            today += double.parse(doc['fare']);
+          }
           total += double.parse(doc['fare']);
         });
       }
