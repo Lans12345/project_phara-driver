@@ -43,7 +43,7 @@ class _SplashToHomeScreenState extends State<SplashToHomeScreen> {
             children: [
               Image.asset(
                 'assets/images/animation.gif',
-                width: 250,
+                width: 350,
               ),
               const SizedBox(
                 height: 50,

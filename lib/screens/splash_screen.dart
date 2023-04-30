@@ -60,7 +60,7 @@ class _SplashScreenState extends State<SplashScreen> {
               ),
               Image.asset(
                 'assets/images/animation.gif',
-                width: 250,
+                width: 350,
               ),
               const SizedBox(
                 height: 50,
