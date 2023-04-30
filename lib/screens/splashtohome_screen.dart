@@ -21,7 +21,7 @@ class _SplashToHomeScreenState extends State<SplashToHomeScreen> {
     determinePosition();
     Timer(const Duration(seconds: 5), () async {
       Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => HomeScreen()));
+          MaterialPageRoute(builder: (context) => const HomeScreen()));
     });
   }
 
@@ -42,7 +42,7 @@ class _SplashToHomeScreenState extends State<SplashToHomeScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset(
-                'assets/images/rider.png',
+                'assets/images/animation.gif',
                 width: 250,
               ),
               const SizedBox(

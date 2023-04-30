@@ -29,7 +29,7 @@ class _SplashScreenState extends State<SplashScreen> {
             stream: FirebaseAuth.instance.authStateChanges(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                return HomeScreen();
+                return const HomeScreen();
               } else {
                 return const LandingScreen();
               }
@@ -59,7 +59,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 height: 20,
               ),
               Image.asset(
-                'assets/images/rider.png',
+                'assets/images/animation.gif',
                 width: 250,
               ),
               const SizedBox(

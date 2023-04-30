@@ -699,6 +699,30 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                         'isActive':
                                                                             false
                                                                       });
+
+                                                                       await FirebaseFirestore
+                                                                  .instance
+                                                                  .collection(
+                                                                      'Users')
+                                                                  .doc(data.docs[
+                                                                          index]
+                                                                      [
+                                                                      'userId'])
+                                                                  .update({
+                                                                'notif': FieldValue
+                                                                    .arrayUnion([
+                                                                  {
+                                                                    'notif':
+                                                                        'Youre booking was accepted!',
+                                                                    'read':
+                                                                        false,
+                                                                    'date':
+                                                                        DateTime
+                                                                            .now(),
+                                                                  }
+                                                                ]),
+                                                              });
+                                                                      
                                                                       Navigator.pop(
                                                                           context);
 
