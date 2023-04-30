@@ -15,6 +15,7 @@ import 'package:phara_driver/widgets/toast_widget.dart';
 import '../data/user_stream.dart';
 import '../plugins/my_location.dart';
 import '../utils/colors.dart';
+import '../widgets/button_widget.dart';
 import '../widgets/drawer_widget.dart';
 import '../widgets/text_widget.dart';
 
@@ -55,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
       .snapshots();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context1) {
     final CameraPosition camPosition = CameraPosition(
         target: LatLng(lat, long), zoom: 16, bearing: 80, tilt: 45);
     return hasLoaded
@@ -83,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 FloatingActionButton(
                     backgroundColor: Colors.white,
                     onPressed: (() {
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(
+                      Navigator.of(context1).pushReplacement(MaterialPageRoute(
                           builder: (context) => const HomeScreen()));
                     }),
                     child: const Icon(
@@ -96,7 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 FloatingActionButton(
                     backgroundColor: Colors.white,
                     onPressed: (() {
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(
+                      Navigator.of(context1).pushReplacement(MaterialPageRoute(
                           builder: (context) => const TripsPage()));
                     }),
                     child: const Icon(
@@ -404,10 +405,74 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                               target: LatLng(data.docs[index]['originCoordinates']['lat'], data.docs[index]['originCoordinates']['long']),
                                                                               zoom: 16)));
                                                                           Marker mylocationMarker = Marker(
+                                                                              onTap: () {
+                                                                                if (data.docs[index]['status'] == 'Rejected') {
+                                                                                  showToast('The booking of this user was rejected! Cannot procceed');
+                                                                                } else {
+                                                                                  showDialog(
+                                                                                      context: context1,
+                                                                                      builder: (context1) {
+                                                                                        return AlertDialog(
+                                                                                          content: Column(mainAxisSize: MainAxisSize.min, children: [
+                                                                                            Row(
+                                                                                              children: [
+                                                                                                const CircleAvatar(
+                                                                                                  minRadius: 25,
+                                                                                                  maxRadius: 25,
+                                                                                                  backgroundImage: AssetImage('assets/images/profile.png'),
+                                                                                                ),
+                                                                                                const SizedBox(
+                                                                                                  width: 15,
+                                                                                                ),
+                                                                                                Column(
+                                                                                                  mainAxisAlignment: MainAxisAlignment.end,
+                                                                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                                  children: [
+                                                                                                    TextBold(text: 'Name: ${data.docs[index]['userName']}', fontSize: 14, color: Colors.black),
+                                                                                                    SizedBox(
+                                                                                                      width: 150,
+                                                                                                      child: TextRegular(text: 'Destination: ${data.docs[index]['destination']}', fontSize: 11, color: grey),
+                                                                                                    ),
+                                                                                                    SizedBox(
+                                                                                                      width: 150,
+                                                                                                      child: TextRegular(text: 'Origin: ${data.docs[index]['origin']}', fontSize: 11, color: grey),
+                                                                                                    ),
+                                                                                                  ],
+                                                                                                ),
+                                                                                              ],
+                                                                                            ),
+                                                                                          ]),
+                                                                                          actions: [
+                                                                                            TextButton(
+                                                                                              onPressed: () async {
+                                                                                                Navigator.pop(context1);
+                                                                                                setState(() {
+                                                                                                  markers.removeWhere((element) => element.markerId == data.docs[index]['userName']);
+                                                                                                });
+                                                                                                await FirebaseFirestore.instance.collection('Bookings').doc(data.docs[index].id).update({
+                                                                                                  'status': 'Rejected'
+                                                                                                });
+                                                                                                await FirebaseFirestore.instance.collection('Users').doc(data.docs[index]['userId']).update({
+                                                                                                  'notif': FieldValue.arrayUnion([
+                                                                                                    {
+                                                                                                      'notif': 'Youre booking was rejected!',
+                                                                                                      'read': false,
+                                                                                                      'date': DateTime.now(),
+                                                                                                    }
+                                                                                                  ]),
+                                                                                                });
+
+                                                                                                mapController?.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(bearing: 45, tilt: 40, target: LatLng(lat, long), zoom: 16)));
+                                                                                              },
+                                                                                              child: TextRegular(text: 'Reject Booking', fontSize: 12, color: Colors.red),
+                                                                                            ),
+                                                                                            ButtonWidget(opacity: 1, color: Colors.green, radius: 5, fontSize: 14, width: 100, height: 30, label: 'Accept Booking', onPressed: () async {})
+                                                                                          ],
+                                                                                        );
+                                                                                      });
+                                                                                }
+                                                                              },
                                                                               markerId: MarkerId(data.docs[index]['userName']),
-                                                                              infoWindow: InfoWindow(
-                                                                                title: "${data.docs[index]['userName']}'s Pickup Location",
-                                                                              ),
                                                                               icon: BitmapDescriptor.defaultMarker,
                                                                               position: LatLng(data.docs[index]['originCoordinates']['lat'], data.docs[index]['originCoordinates']['long']));
 
