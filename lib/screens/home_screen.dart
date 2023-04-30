@@ -116,7 +116,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           }),
                           child: b.Badge(
                             showBadge: data.docs.isNotEmpty,
-                            badgeContent: TextRegular(text: data.docs.length.toString(), fontSize: 12, color: Colors.white),
+                            badgeContent: TextRegular(
+                                text: data.docs.length.toString(),
+                                fontSize: 12,
+                                color: Colors.white),
                             child: const Icon(
                               Icons.groups,
                               color: grey,
@@ -680,7 +683,24 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                     label:
                                                                         'Accept Booking',
                                                                     onPressed:
-                                                                        () async {})
+                                                                        () async {
+                                                                      await FirebaseFirestore
+                                                                          .instance
+                                                                          .collection(
+                                                                              'Drivers')
+                                                                          .doc(FirebaseAuth
+                                                                              .instance
+                                                                              .currentUser!
+                                                                              .uid)
+                                                                          .update({
+                                                                        'isActive':
+                                                                            false
+                                                                      });
+                                                                      Navigator.pop(
+                                                                          context);
+
+                                                                      // To Do: Booking
+                                                                    })
                                                               ],
                                                             );
                                                           });
