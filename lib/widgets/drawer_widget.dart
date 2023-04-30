@@ -234,7 +234,7 @@ class DrawerWidget extends StatelessWidget {
                     ),
                     onTap: () {
                       Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) => const ReportsPage()));
+                          builder: (context) => ReportsPage()));
                     },
                   ),
                   ListTile(
