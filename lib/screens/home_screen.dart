@@ -391,6 +391,31 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                   child: Column(
                                                                     children: [
                                                                       ListTile(
+                                                                        onTap:
+                                                                            () {
+                                                                          Navigator.of(context)
+                                                                              .pop();
+                                                                          Navigator.of(context)
+                                                                              .pop();
+
+                                                                          mapController?.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+                                                                              bearing: 45,
+                                                                              tilt: 40,
+                                                                              target: LatLng(data.docs[index]['originCoordinates']['lat'], data.docs[index]['originCoordinates']['long']),
+                                                                              zoom: 16)));
+                                                                          Marker mylocationMarker = Marker(
+                                                                              markerId: MarkerId(data.docs[index]['userName']),
+                                                                              infoWindow: InfoWindow(
+                                                                                title: "${data.docs[index]['userName']}'s Pickup Location",
+                                                                              ),
+                                                                              icon: BitmapDescriptor.defaultMarker,
+                                                                              position: LatLng(data.docs[index]['originCoordinates']['lat'], data.docs[index]['originCoordinates']['long']));
+
+                                                                          setState(
+                                                                              () {
+                                                                            markers.add(mylocationMarker);
+                                                                          });
+                                                                        },
                                                                         leading: TextRegular(
                                                                             text:
                                                                                 'View on map',
@@ -436,6 +461,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                                           Navigator.of(context).pop();
                                                                                           await FirebaseFirestore.instance.collection('Bookings').doc(data.docs[index].id).update({
                                                                                             'status': 'Rejected'
+                                                                                          });
+                                                                                          await FirebaseFirestore.instance.collection('Users').doc(data.docs[index]['userId']).update({
+                                                                                            'notif': FieldValue.arrayUnion([
+                                                                                              {
+                                                                                                'notif': 'Youre booking was rejected!',
+                                                                                                'read': false,
+                                                                                                'date': DateTime.now(),
+                                                                                              }
+                                                                                            ]),
                                                                                           });
                                                                                         },
                                                                                         child: const Text(
