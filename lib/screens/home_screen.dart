@@ -493,6 +493,7 @@ class _HomeScreenState extends State<HomeScreen> {
         context: context,
         builder: (context) {
           return Dialog(
+            backgroundColor: Colors.grey[100],
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
