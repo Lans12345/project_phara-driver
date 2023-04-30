@@ -120,6 +120,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 text: data.docs.length.toString(),
                                 fontSize: 12,
                                 color: Colors.white),
+                            badgeStyle:
+                                b.BadgeStyle(badgeColor: Colors.amber[600]!),
                             child: Icon(
                               Icons.groups,
                               color: data.docs.isNotEmpty
@@ -135,10 +137,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     backgroundColor: Colors.white,
                     onPressed: (() {
                       Navigator.of(context1).pushReplacement(MaterialPageRoute(
-                          builder: (context) => const HomeScreen()));
+                          builder: (context) => const TripsPage()));
                     }),
                     child: const Icon(
-                      Icons.refresh,
+                      Icons.collections_bookmark_outlined,
                       color: grey,
                     )),
                 const SizedBox(
@@ -148,10 +150,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     backgroundColor: Colors.white,
                     onPressed: (() {
                       Navigator.of(context1).pushReplacement(MaterialPageRoute(
-                          builder: (context) => const TripsPage()));
+                          builder: (context) => const HomeScreen()));
                     }),
                     child: const Icon(
-                      Icons.collections_bookmark_outlined,
+                      Icons.refresh,
                       color: grey,
                     )),
               ],
