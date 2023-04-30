@@ -386,31 +386,33 @@ class _HomeScreenState extends State<HomeScreen> {
                           }
 
                           final data = snapshot.requireData;
-                          return GestureDetector(
-                            onTap: () {
-                              if (data.docs.isNotEmpty) {
-                                showBookingData(data, context1);
-                              }
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: data.docs.isNotEmpty
-                                    ? Colors.amber
-                                    : grey.withOpacity(0.5),
-                                borderRadius: BorderRadius.circular(50),
-                              ),
-                              height: 40,
-                              width: 200,
-                              child: Center(
-                                child: TextRegular(
-                                    text: data.docs.length > 1
-                                        ? '${data.docs.length} bookings'
-                                        : '${data.docs.length} booking',
-                                    fontSize: 18,
-                                    color: Colors.white),
-                              ),
-                            ),
-                          );
+                          return data.docs.isNotEmpty
+                              ? GestureDetector(
+                                  onTap: () {
+                                    if (data.docs.isNotEmpty) {
+                                      showBookingData(data, context1);
+                                    }
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: data.docs.isNotEmpty
+                                          ? Colors.amber
+                                          : grey.withOpacity(0.5),
+                                      borderRadius: BorderRadius.circular(50),
+                                    ),
+                                    height: 40,
+                                    width: 200,
+                                    child: Center(
+                                      child: TextRegular(
+                                          text: data.docs.length > 1
+                                              ? '${data.docs.length} bookings'
+                                              : '${data.docs.length} booking',
+                                          fontSize: 18,
+                                          color: Colors.white),
+                                    ),
+                                  ),
+                                )
+                              : SizedBox();
                         }),
                   ),
                 ),
