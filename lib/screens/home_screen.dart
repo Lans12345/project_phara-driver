@@ -313,6 +313,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             .where('driverId',
                                 isEqualTo:
                                     FirebaseAuth.instance.currentUser!.uid)
+                            .where('status', isEqualTo: 'Pending')
                             .snapshots(),
                         builder: (BuildContext context,
                             AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -407,6 +408,44 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                       ),
                                                                       const Divider(),
                                                                       ListTile(
+                                                                        onTap:
+                                                                            () {
+                                                                          showDialog(
+                                                                              context: context,
+                                                                              builder: (context) => AlertDialog(
+                                                                                    title: const Text(
+                                                                                      'Decline confirmation',
+                                                                                      style: TextStyle(fontFamily: 'QBold', fontWeight: FontWeight.bold),
+                                                                                    ),
+                                                                                    content: const Text(
+                                                                                      'Are you sure you want to Decline this booking?',
+                                                                                      style: TextStyle(fontFamily: 'QRegular'),
+                                                                                    ),
+                                                                                    actions: <Widget>[
+                                                                                      MaterialButton(
+                                                                                        onPressed: () => Navigator.of(context).pop(true),
+                                                                                        child: const Text(
+                                                                                          'Close',
+                                                                                          style: TextStyle(fontFamily: 'QRegular', fontWeight: FontWeight.bold),
+                                                                                        ),
+                                                                                      ),
+                                                                                      MaterialButton(
+                                                                                        onPressed: () async {
+                                                                                          Navigator.of(context).pop();
+                                                                                          Navigator.of(context).pop();
+                                                                                          Navigator.of(context).pop();
+                                                                                          await FirebaseFirestore.instance.collection('Bookings').doc(data.docs[index].id).update({
+                                                                                            'status': 'Rejected'
+                                                                                          });
+                                                                                        },
+                                                                                        child: const Text(
+                                                                                          'Continue',
+                                                                                          style: TextStyle(fontFamily: 'QRegular', fontWeight: FontWeight.bold),
+                                                                                        ),
+                                                                                      ),
+                                                                                    ],
+                                                                                  ));
+                                                                        },
                                                                         leading: TextRegular(
                                                                             text:
                                                                                 'Reject Booking',
