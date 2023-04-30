@@ -307,20 +307,48 @@ class _HomeScreenState extends State<HomeScreen> {
                   padding: const EdgeInsets.only(top: 20),
                   child: Align(
                     alignment: Alignment.topCenter,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: grey.withOpacity(0.5),
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                      height: 40,
-                      width: 200,
-                      child: Center(
-                        child: TextRegular(
-                            text: '0 bookings',
-                            fontSize: 18,
-                            color: Colors.white),
-                      ),
-                    ),
+                    child: StreamBuilder<QuerySnapshot>(
+                        stream: FirebaseFirestore.instance
+                            .collection('Bookings')
+                            .where('driverId',
+                                isEqualTo:
+                                    FirebaseAuth.instance.currentUser!.uid)
+                            .snapshots(),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<QuerySnapshot> snapshot) {
+                          if (snapshot.hasError) {
+                            print('error');
+                            return const Center(child: Text('Error'));
+                          }
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Padding(
+                              padding: EdgeInsets.only(top: 50),
+                              child: Center(
+                                  child: CircularProgressIndicator(
+                                color: Colors.black,
+                              )),
+                            );
+                          }
+
+                          final data = snapshot.requireData;
+                          return Container(
+                            decoration: BoxDecoration(
+                              color: data.docs.isNotEmpty
+                                  ? Colors.amber
+                                  : grey.withOpacity(0.5),
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                            height: 40,
+                            width: 200,
+                            child: Center(
+                              child: TextRegular(
+                                  text: '${data.docs.length} bookings',
+                                  fontSize: 18,
+                                  color: Colors.white),
+                            ),
+                          );
+                        }),
                   ),
                 ),
                 // Center(
