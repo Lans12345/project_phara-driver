@@ -72,8 +72,7 @@ class _ChatPageState extends State<ChatPage> {
               const CircleAvatar(
                 minRadius: 22,
                 maxRadius: 22,
-                backgroundImage: NetworkImage(
-                    'https://i.pinimg.com/originals/45/e1/9c/45e19c74f5c293c27a7ec8aee6a92936.jpg'),
+                backgroundImage: AssetImage('assets/images/profile.png'),
               ),
               const SizedBox(
                 width: 10,

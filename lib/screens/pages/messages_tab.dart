@@ -79,9 +79,8 @@ class _MessagesTabState extends State<MessagesTab> {
                                 leading: const CircleAvatar(
                                   maxRadius: 25,
                                   minRadius: 25,
-                                  backgroundImage: NetworkImage(
-                                    'https://i.pinimg.com/originals/45/e1/9c/45e19c74f5c293c27a7ec8aee6a92936.jpg',
-                                  ),
+                                  backgroundImage:
+                                      AssetImage('assets/images/profile.png'),
                                 ),
                                 title: data.docs[index]['seen'] == true
                                     ? TextRegular(
