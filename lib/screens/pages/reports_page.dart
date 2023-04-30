@@ -141,7 +141,7 @@ class _ReportsPageState extends State<ReportsPage> {
                             child: Column(
                               children: [
                                 TextRegular(
-                                    text: 'Number of bookings per day',
+                                    text: 'Number of bookings per week',
                                     fontSize: 18,
                                     color: Colors.black),
                                 const SizedBox(
