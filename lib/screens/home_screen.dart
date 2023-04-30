@@ -57,7 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final CameraPosition camPosition = CameraPosition(
-        target: LatLng(lat, long), zoom: 16, bearing: 45, tilt: 40);
+        target: LatLng(lat, long), zoom: 16, bearing: 80, tilt: 45);
     return hasLoaded
         ? Scaffold(
             floatingActionButton: Column(
@@ -399,5 +399,12 @@ class _HomeScreenState extends State<HomeScreen> {
         print('Error getting location: $error');
       });
     });
+  }
+
+  @override
+  void dispose() {
+    mapController!.dispose();
+    // TODO: implement dispose
+    super.dispose();
   }
 }
