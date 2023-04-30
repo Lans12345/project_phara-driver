@@ -147,11 +147,9 @@ class _ReportsPageState extends State<ReportsPage> {
                                 const SizedBox(
                                   height: 10,
                                 ),
-                                Container(
-                                    child: SfCartesianChart(
-                                        primaryXAxis: CategoryAxis(),
-                                        series: <
-                                            ChartSeries<ChartData, String>>[
+                                SfCartesianChart(
+                                    primaryXAxis: CategoryAxis(),
+                                    series: <ChartSeries<ChartData, String>>[
                                       // Renders column chart
                                       ColumnSeries<ChartData, String>(
                                           dataSource: chartData,
@@ -159,7 +157,7 @@ class _ReportsPageState extends State<ReportsPage> {
                                               data.x,
                                           yValueMapper: (ChartData data, _) =>
                                               data.y)
-                                    ])),
+                                    ]),
                               ],
                             ),
                           )
