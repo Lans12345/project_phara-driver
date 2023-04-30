@@ -335,83 +335,136 @@ class _HomeScreenState extends State<HomeScreen> {
                           return GestureDetector(
                             onTap: () {
                               if (data.docs.isNotEmpty) {
-                                showBottomSheet(
+                                showDialog(
                                     context: context,
                                     builder: (context) {
-                                      return Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 20, right: 10),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                TextBold(
-                                                    text: 'Bookings',
-                                                    fontSize: 18,
-                                                    color: Colors.amber),
-                                                IconButton(
-                                                  onPressed: () {
-                                                    Navigator.pop(context);
-                                                  },
-                                                  icon: const Icon(
-                                                    Icons.close,
-                                                    color: Colors.red,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            height: 300,
-                                            child: ListView.builder(
-                                              itemCount: data.docs.length,
-                                              itemBuilder: (context, index) {
-                                                return Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          top: 5,
-                                                          bottom: 5,
-                                                          left: 10,
-                                                          right: 10),
-                                                  child: Card(
-                                                    child: ListTile(
-                                                      onTap: () {},
-                                                      leading:
-                                                          const CircleAvatar(
-                                                        minRadius: 15,
-                                                        maxRadius: 15,
-                                                        backgroundImage: AssetImage(
-                                                            'assets/images/profile.png'),
-                                                      ),
-                                                      title: TextBold(
-                                                          text:
-                                                              'To: ${data.docs[index]['destination']}',
-                                                          fontSize: 12,
-                                                          color: Colors.black),
-                                                      subtitle: TextRegular(
-                                                          text:
-                                                              'From: ${data.docs[index]['origin']}',
-                                                          fontSize: 11,
-                                                          color: Colors.grey),
-                                                      trailing: TextRegular(
-                                                          text: DateFormat.jm()
-                                                              .format(data
-                                                                  .docs[index][
-                                                                      'dateTime']
-                                                                  .toDate()),
-                                                          fontSize: 12,
-                                                          color: Colors.black),
+                                      return Dialog(
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 20, right: 10),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  TextBold(
+                                                      text: 'Bookings',
+                                                      fontSize: 18,
+                                                      color: Colors.amber),
+                                                  IconButton(
+                                                    onPressed: () {
+                                                      Navigator.pop(context);
+                                                    },
+                                                    icon: const Icon(
+                                                      Icons.close,
+                                                      color: Colors.red,
                                                     ),
                                                   ),
-                                                );
-                                              },
+                                                ],
+                                              ),
                                             ),
-                                          ),
-                                        ],
+                                            SizedBox(
+                                              height: 300,
+                                              child: ListView.builder(
+                                                itemCount: data.docs.length,
+                                                itemBuilder: (context, index) {
+                                                  return Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            top: 5,
+                                                            bottom: 5,
+                                                            left: 10,
+                                                            right: 10),
+                                                    child: Card(
+                                                      child: ListTile(
+                                                        onTap: () {
+                                                          showModalBottomSheet(
+                                                              context: context,
+                                                              builder:
+                                                                  (context) {
+                                                                return SizedBox(
+                                                                  height: 130,
+                                                                  child: Column(
+                                                                    children: [
+                                                                      ListTile(
+                                                                        leading: TextRegular(
+                                                                            text:
+                                                                                'View on map',
+                                                                            fontSize:
+                                                                                14,
+                                                                            color:
+                                                                                Colors.green),
+                                                                        trailing:
+                                                                            const Icon(
+                                                                          Icons
+                                                                              .remove_red_eye,
+                                                                          color:
+                                                                              Colors.green,
+                                                                        ),
+                                                                      ),
+                                                                      const Divider(),
+                                                                      ListTile(
+                                                                        leading: TextRegular(
+                                                                            text:
+                                                                                'Reject Booking',
+                                                                            fontSize:
+                                                                                14,
+                                                                            color:
+                                                                                Colors.red),
+                                                                        trailing:
+                                                                            const Icon(
+                                                                          Icons
+                                                                              .close,
+                                                                          color:
+                                                                              Colors.red,
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                );
+                                                              });
+                                                        },
+                                                        leading:
+                                                            const CircleAvatar(
+                                                          minRadius: 15,
+                                                          maxRadius: 15,
+                                                          backgroundImage:
+                                                              AssetImage(
+                                                                  'assets/images/profile.png'),
+                                                        ),
+                                                        title: TextBold(
+                                                            text:
+                                                                'To: ${data.docs[index]['destination']}',
+                                                            fontSize: 12,
+                                                            color:
+                                                                Colors.black),
+                                                        subtitle: TextRegular(
+                                                            text:
+                                                                'From: ${data.docs[index]['origin']}',
+                                                            fontSize: 11,
+                                                            color: Colors.grey),
+                                                        trailing: TextRegular(
+                                                            text: DateFormat
+                                                                    .jm()
+                                                                .format(data
+                                                                    .docs[index]
+                                                                        [
+                                                                        'dateTime']
+                                                                    .toDate()),
+                                                            fontSize: 12,
+                                                            color:
+                                                                Colors.black),
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       );
                                     });
                               }
