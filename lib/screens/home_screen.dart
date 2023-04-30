@@ -399,7 +399,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               width: 200,
                               child: Center(
                                 child: TextRegular(
-                                    text: '${data.docs.length} bookings',
+                                    text: data.docs.length > 1
+                                        ? '${data.docs.length} bookings'
+                                        : '${data.docs.length} booking',
                                     fontSize: 18,
                                     color: Colors.white),
                               ),
