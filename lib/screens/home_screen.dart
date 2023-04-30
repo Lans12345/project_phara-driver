@@ -332,20 +332,105 @@ class _HomeScreenState extends State<HomeScreen> {
                           }
 
                           final data = snapshot.requireData;
-                          return Container(
-                            decoration: BoxDecoration(
-                              color: data.docs.isNotEmpty
-                                  ? Colors.amber
-                                  : grey.withOpacity(0.5),
-                              borderRadius: BorderRadius.circular(50),
-                            ),
-                            height: 40,
-                            width: 200,
-                            child: Center(
-                              child: TextRegular(
-                                  text: '${data.docs.length} bookings',
-                                  fontSize: 18,
-                                  color: Colors.white),
+                          return GestureDetector(
+                            onTap: () {
+                              if (data.docs.isNotEmpty) {
+                                showBottomSheet(
+                                    context: context,
+                                    builder: (context) {
+                                      return Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 20, right: 10),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                TextBold(
+                                                    text: 'Bookings',
+                                                    fontSize: 18,
+                                                    color: Colors.amber),
+                                                IconButton(
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                  icon: const Icon(
+                                                    Icons.close,
+                                                    color: Colors.red,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: 300,
+                                            child: ListView.builder(
+                                              itemCount: data.docs.length,
+                                              itemBuilder: (context, index) {
+                                                return Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 5,
+                                                          bottom: 5,
+                                                          left: 10,
+                                                          right: 10),
+                                                  child: Card(
+                                                    child: ListTile(
+                                                      onTap: () {},
+                                                      leading:
+                                                          const CircleAvatar(
+                                                        minRadius: 15,
+                                                        maxRadius: 15,
+                                                        backgroundImage: AssetImage(
+                                                            'assets/images/profile.png'),
+                                                      ),
+                                                      title: TextBold(
+                                                          text:
+                                                              'To: ${data.docs[index]['destination']}',
+                                                          fontSize: 12,
+                                                          color: Colors.black),
+                                                      subtitle: TextRegular(
+                                                          text:
+                                                              'From: ${data.docs[index]['origin']}',
+                                                          fontSize: 11,
+                                                          color: Colors.grey),
+                                                      trailing: TextRegular(
+                                                          text: DateFormat.jm()
+                                                              .format(data
+                                                                  .docs[index][
+                                                                      'dateTime']
+                                                                  .toDate()),
+                                                          fontSize: 12,
+                                                          color: Colors.black),
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    });
+                              }
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: data.docs.isNotEmpty
+                                    ? Colors.amber
+                                    : grey.withOpacity(0.5),
+                                borderRadius: BorderRadius.circular(50),
+                              ),
+                              height: 40,
+                              width: 200,
+                              child: Center(
+                                child: TextRegular(
+                                    text: '${data.docs.length} bookings',
+                                    fontSize: 18,
+                                    color: Colors.white),
+                              ),
                             ),
                           );
                         }),
