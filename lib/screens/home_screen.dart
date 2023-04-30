@@ -120,9 +120,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                 text: data.docs.length.toString(),
                                 fontSize: 12,
                                 color: Colors.white),
-                            child: const Icon(
+                            child: Icon(
                               Icons.groups,
-                              color: grey,
+                              color: data.docs.isNotEmpty
+                                  ? Colors.amber[600]
+                                  : grey,
                             ),
                           ));
                     }),
