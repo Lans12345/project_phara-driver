@@ -30,16 +30,24 @@ class _ReportsPageState extends State<ReportsPage> {
   double today = 0;
   double average = 0;
 
+  double monday = 0;
+  double tuesday = 0;
+  double wednesday = 0;
+  double thursday = 0;
+  double friday = 0;
+  double saturday = 0;
+  double sunday = 0;
+
   @override
   Widget build(BuildContext context) {
     final List<ChartData> chartData = [
-      ChartData('Monday', 5),
-      ChartData('Tuesday', 5),
-      ChartData('Wednesday', 5),
-      ChartData('Thursday', 5),
-      ChartData('Friday', 5),
-      ChartData('Saturday', 5),
-      ChartData('Sunday', 5),
+      ChartData('Monday', monday),
+      ChartData('Tuesday', tuesday),
+      ChartData('Wednesday', wednesday),
+      ChartData('Thursday', thursday),
+      ChartData('Friday', friday),
+      ChartData('Saturday', saturday),
+      ChartData('Sunday', sunday),
     ];
     return Scaffold(
         drawer: DrawerWidget(),
@@ -177,6 +185,22 @@ class _ReportsPageState extends State<ReportsPage> {
               dateTime.month == DateTime.now().month &&
               dateTime.day == DateTime.now().day) {
             today += double.parse(doc['fare']);
+          }
+
+          if (dateTime.weekday == DateTime.monday) {
+            monday += 1;
+          } else if (dateTime.weekday == DateTime.tuesday) {
+            tuesday += 1;
+          } else if (dateTime.weekday == DateTime.wednesday) {
+            wednesday += 1;
+          } else if (dateTime.weekday == DateTime.thursday) {
+            thursday += 1;
+          } else if (dateTime.weekday == DateTime.friday) {
+            friday += 1;
+          } else if (dateTime.weekday == DateTime.saturday) {
+            saturday += 1;
+          } else if (dateTime.weekday == DateTime.sunday) {
+            sunday += 1;
           }
           total += double.parse(doc['fare']);
         });
