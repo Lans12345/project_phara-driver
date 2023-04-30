@@ -36,7 +36,8 @@ class DrawerWidget extends StatelessWidget {
           }
           dynamic data = snapshot.data;
 
-          double rating = data['ratings'].length / data['stars'];
+          double rating = data['stars'] / data['ratings'].length;
+
           return SizedBox(
             child: Drawer(
               child: ListView(
