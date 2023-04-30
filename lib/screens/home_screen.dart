@@ -7,15 +7,17 @@ import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:intl/intl.dart';
+import 'package:phara_driver/screens/pages/messages_tab.dart';
 import 'package:phara_driver/widgets/toast_widget.dart';
 
+import '../data/user_stream.dart';
 import '../plugins/my_location.dart';
 import '../utils/colors.dart';
 import '../widgets/book_bottomsheet_widget.dart';
 import '../widgets/button_widget.dart';
 import '../widgets/drawer_widget.dart';
 import '../widgets/text_widget.dart';
-import 'pages/messages_tab.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -100,36 +102,125 @@ class _HomeScreenState extends State<HomeScreen> {
               foregroundColor: grey,
               backgroundColor: Colors.white,
               actions: [
-                b.Badge(
-                  position: b.BadgePosition.custom(start: -1, top: 3),
-                  badgeContent: TextRegular(
-                    text: '1',
-                    fontSize: 12,
-                    color: Colors.white,
-                  ),
-                  child: IconButton(
-                    onPressed: (() {
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) => const MessagesTab()));
+                StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection('Messages')
+                        .where('driverId',
+                            isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                        .where('seen', isEqualTo: false)
+                        .snapshots(),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<QuerySnapshot> snapshot) {
+                      if (snapshot.hasError) {
+                        print('error');
+                        return const Center(child: Text('Error'));
+                      }
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Padding(
+                          padding: EdgeInsets.only(top: 50),
+                          child: Center(
+                              child: CircularProgressIndicator(
+                            color: Colors.black,
+                          )),
+                        );
+                      }
+
+                      final data = snapshot.requireData;
+                      return b.Badge(
+                        position: b.BadgePosition.custom(top: 5, start: -5),
+                        showBadge: data.docs.isNotEmpty,
+                        badgeAnimation: const b.BadgeAnimation.fade(),
+                        badgeStyle: const b.BadgeStyle(
+                          badgeColor: Colors.red,
+                        ),
+                        badgeContent: TextRegular(
+                            text: data.docs.length.toString(),
+                            fontSize: 12,
+                            color: Colors.white),
+                        child: Center(
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const MessagesTab()));
+                            },
+                            child: const Icon(
+                              Icons.message_outlined,
+                              color: grey,
+                            ),
+                          ),
+                        ),
+                      );
                     }),
-                    icon: const Icon(Icons.message_outlined),
-                  ),
-                ),
-                b.Badge(
-                  position: b.BadgePosition.custom(start: -1, top: 3),
-                  badgeContent: TextRegular(
-                    text: '1',
-                    fontSize: 12,
-                    color: Colors.white,
-                  ),
-                  child: IconButton(
-                    onPressed: (() {
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) => const MessagesTab()));
+                StreamBuilder<DocumentSnapshot>(
+                    stream: FirebaseData().userData,
+                    builder:
+                        (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+                      if (!snapshot.hasData) {
+                        return const Center(child: Text('Loading'));
+                      } else if (snapshot.hasError) {
+                        return const Center(
+                            child: Text('Something went wrong'));
+                      } else if (snapshot.connectionState ==
+                          ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      dynamic data = snapshot.data;
+
+                      List oldnotifs = data['notif'];
+
+                      List notifs = oldnotifs.reversed.toList();
+                      return PopupMenuButton(
+                          icon: b.Badge(
+                            showBadge: notifs.isNotEmpty,
+                            badgeContent: TextRegular(
+                              text: data['notif'].length.toString(),
+                              fontSize: 12,
+                              color: Colors.white,
+                            ),
+                            child: const Icon(Icons.notifications_rounded),
+                          ),
+                          itemBuilder: (context) {
+                            return [
+                              for (int i = 0; i < notifs.length; i++)
+                                PopupMenuItem(
+                                    child: ListTile(
+                                  title: TextRegular(
+                                      text: notifs[i]['notif'],
+                                      fontSize: 14,
+                                      color: Colors.black),
+                                  subtitle: TextRegular(
+                                      text: DateFormat.yMMMd()
+                                          .add_jm()
+                                          .format(notifs[i]['date'].toDate()),
+                                      fontSize: 10,
+                                      color: grey),
+                                  leading: const Icon(
+                                    Icons.notifications_active_outlined,
+                                    color: grey,
+                                  ),
+                                  trailing: IconButton(
+                                    onPressed: () async {
+                                      await FirebaseFirestore.instance
+                                          .collection('Users')
+                                          .doc(FirebaseAuth
+                                              .instance.currentUser!.uid)
+                                          .update({
+                                        'notif':
+                                            FieldValue.arrayRemove([notifs[i]]),
+                                      });
+                                      Navigator.pop(context);
+                                    },
+                                    icon: const Icon(
+                                      Icons.delete_outline_rounded,
+                                      color: grey,
+                                    ),
+                                  ),
+                                )),
+                            ];
+                          });
                     }),
-                    icon: const Icon(Icons.notifications),
-                  ),
-                ),
                 const SizedBox(
                   width: 10,
                 ),
