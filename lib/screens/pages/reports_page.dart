@@ -41,130 +41,100 @@ class _ReportsPageState extends State<ReportsPage> {
   @override
   Widget build(BuildContext context) {
     final List<ChartData> chartData = [
-      ChartData('Monday', monday),
-      ChartData('Tuesday', tuesday),
-      ChartData('Wednesday', wednesday),
-      ChartData('Thursday', thursday),
-      ChartData('Friday', friday),
-      ChartData('Saturday', saturday),
-      ChartData('Sunday', sunday),
+      ChartData('Mon', monday),
+      ChartData('Tue', tuesday),
+      ChartData('Wed', wednesday),
+      ChartData('Thu', thursday),
+      ChartData('Fri', friday),
+      ChartData('Sat', saturday),
+      ChartData('Sun', sunday),
     ];
     return Scaffold(
         drawer: DrawerWidget(),
         appBar: AppbarWidget('Earnings report'),
         body: hasLoaded
             ? SingleChildScrollView(
-                child: StreamBuilder<QuerySnapshot>(
-                    stream: FirebaseFirestore.instance
-                        .collection('Bookings')
-                        .where('driverId',
-                            isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-                        .where('status', isEqualTo: 'Accepted')
-                        .snapshots(),
-                    builder: (BuildContext context,
-                        AsyncSnapshot<QuerySnapshot> snapshot) {
-                      if (snapshot.hasError) {
-                        print('error');
-                        return const Center(child: Text('Error'));
-                      }
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Padding(
-                          padding: EdgeInsets.only(top: 50),
-                          child: Center(
-                              child: CircularProgressIndicator(
-                            color: Colors.black,
-                          )),
-                        );
-                      }
-
-                      final data = snapshot.requireData;
-
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+                    child: Container(
+                      height: 150,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        gradient: const LinearGradient(
+                          colors: [
+                            Color(0xFF363636),
+                            Color(0xFF363636),
+                            Color(0xFF363636),
+                          ],
+                          stops: [0.0, 0.848, 0.6],
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                        ),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
-                            child: Container(
-                              height: 150,
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                gradient: const LinearGradient(
-                                  colors: [
-                                    Color(0xFF363636),
-                                    Color(0xFF363636),
-                                    Color(0xFF363636),
-                                  ],
-                                  stops: [0.0, 0.848, 0.6],
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
-                                ),
-                              ),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  TextRegular(
-                                      text: 'Total:',
-                                      fontSize: 14,
-                                      color: Colors.white),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  TextBold(
-                                      text:
-                                          '₱${NumberFormat('#,##0.00', 'en_US').format(total)}',
-                                      fontSize: 42,
-                                      color: Colors.white),
-                                ],
-                              ),
-                            ),
+                          TextRegular(
+                              text: 'Total:',
+                              fontSize: 14,
+                              color: Colors.white),
+                          const SizedBox(
+                            width: 10,
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                left: 30, right: 30, bottom: 20),
-                            child: TextRegular(
-                                text:
-                                    'Today: ₱${NumberFormat('#,##0.00', 'en_US').format(today)}',
-                                fontSize: 16,
-                                color: Colors.black),
-                          ),
-                          const Padding(
-                            padding: EdgeInsets.only(
-                                left: 30, right: 30, bottom: 10),
-                            child: Divider(
-                              thickness: 2,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(30, 10, 30, 20),
-                            child: Column(
-                              children: [
-                                TextRegular(
-                                    text: 'Number of bookings per week',
-                                    fontSize: 18,
-                                    color: Colors.black),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                SfCartesianChart(
-                                    primaryXAxis: CategoryAxis(),
-                                    series: <ChartSeries<ChartData, String>>[
-                                      // Renders column chart
-                                      ColumnSeries<ChartData, String>(
-                                          dataSource: chartData,
-                                          xValueMapper: (ChartData data, _) =>
-                                              data.x,
-                                          yValueMapper: (ChartData data, _) =>
-                                              data.y)
-                                    ]),
-                              ],
-                            ),
-                          )
+                          TextBold(
+                              text:
+                                  '₱${NumberFormat('#,##0.00', 'en_US').format(total)}',
+                              fontSize: 42,
+                              color: Colors.white),
                         ],
-                      );
-                    }),
-              )
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(left: 30, right: 30, bottom: 20),
+                    child: TextRegular(
+                        text:
+                            'Today: ₱${NumberFormat('#,##0.00', 'en_US').format(today)}',
+                        fontSize: 16,
+                        color: Colors.black),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.only(left: 30, right: 30, bottom: 10),
+                    child: Divider(
+                      thickness: 2,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(30, 10, 30, 20),
+                    child: Column(
+                      children: [
+                        TextRegular(
+                            text: 'Number of bookings per week',
+                            fontSize: 18,
+                            color: Colors.black),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        SfCartesianChart(
+                            primaryXAxis: CategoryAxis(),
+                            series: <ChartSeries<ChartData, String>>[
+                              // Renders column chart
+                              ColumnSeries<ChartData, String>(
+                                  dataSource: chartData,
+                                  xValueMapper: (ChartData data, _) => data.x,
+                                  yValueMapper: (ChartData data, _) => data.y)
+                            ]),
+                      ],
+                    ),
+                  )
+                ],
+              ))
             : const Center(child: CircularProgressIndicator()));
   }
 
