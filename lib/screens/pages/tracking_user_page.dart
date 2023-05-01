@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart' as loc;
+import 'package:phara_driver/screens/home_screen.dart';
 import 'package:phara_driver/widgets/button_widget.dart';
 
 import '../../plugins/my_location.dart';
@@ -73,7 +73,31 @@ class _TrackingOfUserPageState extends State<TrackingOfUserPage> {
             )),
       ),
       appBar: AppBar(
-        automaticallyImplyLeading: false,
+        leading: IconButton(
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text('Are you sure?'),
+                content: const Text('Do you want to close this ride?'),
+                actions: <Widget>[
+                  MaterialButton(
+                    onPressed: () => Navigator.of(context).pop(false),
+                    child: TextRegular(text: 'No', fontSize: 12, color: grey),
+                  ),
+                  MaterialButton(
+                    onPressed: () => Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                            builder: (context) => const HomeScreen())),
+                    child: TextBold(
+                        text: 'Yes', fontSize: 14, color: Colors.black),
+                  ),
+                ],
+              ),
+            );
+          },
+          icon: const Icon(Icons.exit_to_app),
+        ),
         foregroundColor: grey,
         backgroundColor: Colors.white,
         title: Row(
@@ -179,11 +203,24 @@ class _TrackingOfUserPageState extends State<TrackingOfUserPage> {
                                         ),
                                         MaterialButton(
                                           onPressed: () async {
+                                            Navigator.of(context).pop();
                                             setState(() {
                                               passengerOnBoard = true;
+
+                                              markers.clear();
                                             });
 
-                                            Navigator.of(context).pop();
+                                            Timer.periodic(
+                                                const Duration(seconds: 2),
+                                                (timer) {
+                                              Geolocator.getCurrentPosition()
+                                                  .then((position) {
+                                                onboard(position);
+                                              }).catchError((error) {
+                                                print(
+                                                    'Error getting location: $error');
+                                              });
+                                            });
                                           },
                                           child: const Text(
                                             'Continue',
@@ -210,11 +247,6 @@ class _TrackingOfUserPageState extends State<TrackingOfUserPage> {
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
 
-    List<Placemark> p =
-        await placemarkFromCoordinates(position.latitude, position.longitude);
-
-    Placemark place = p[0];
-
     setState(() {
       lat = position.latitude;
       long = position.longitude;
@@ -224,47 +256,80 @@ class _TrackingOfUserPageState extends State<TrackingOfUserPage> {
   late Polyline _poly;
 
   getDrivers() async {
-    Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-    FirebaseFirestore.instance
-        .collection('Users')
-        .where('id', isEqualTo: widget.tripDetails['userId'])
-        .get()
-        .then((QuerySnapshot querySnapshot) async {
-      for (var doc in querySnapshot.docs) {
-        Marker driverMarker = Marker(
-            markerId: MarkerId(doc['name']),
-            infoWindow: InfoWindow(
-              title: doc['name'],
-              snippet: doc['number'],
-            ),
-            icon: BitmapDescriptor.defaultMarker,
-            position: LatLng(widget.tripDetails['originCoordinates']['lat'],
-                widget.tripDetails['originCoordinates']['long']));
+    if (passengerOnBoard == false) {
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
+      FirebaseFirestore.instance
+          .collection('Users')
+          .where('id', isEqualTo: widget.tripDetails['userId'])
+          .get()
+          .then((QuerySnapshot querySnapshot) async {
+        for (var doc in querySnapshot.docs) {
+          Marker driverMarker = Marker(
+              markerId: MarkerId(doc['name']),
+              infoWindow: InfoWindow(
+                title: doc['name'],
+                snippet: doc['number'],
+              ),
+              icon: BitmapDescriptor.defaultMarker,
+              position: LatLng(widget.tripDetails['originCoordinates']['lat'],
+                  widget.tripDetails['originCoordinates']['long']));
 
-        setState(() {
-          _poly = Polyline(
-              color: Colors.red,
-              polylineId: const PolylineId('route'),
-              points: [
-                // User Location
-                LatLng(position.latitude, position.longitude),
-                LatLng(widget.tripDetails['originCoordinates']['lat'],
-                    widget.tripDetails['originCoordinates']['long']),
-              ],
-              width: 4);
-          markers.add(driverMarker);
-          hasLoaded = true;
-        });
-      }
+          setState(() {
+            _poly = Polyline(
+                color: Colors.red,
+                polylineId: const PolylineId('route'),
+                points: [
+                  // User Location
+                  LatLng(position.latitude, position.longitude),
+                  LatLng(widget.tripDetails['originCoordinates']['lat'],
+                      widget.tripDetails['originCoordinates']['long']),
+                ],
+                width: 4);
+            markers.add(driverMarker);
+            hasLoaded = true;
+          });
+        }
 
-      mapController?.animateCamera(CameraUpdate.newCameraPosition(
-          CameraPosition(
-              bearing: 45,
-              tilt: 40,
-              target: LatLng(position.latitude, position.longitude),
-              zoom: 16)));
+        mapController?.animateCamera(CameraUpdate.newCameraPosition(
+            CameraPosition(
+                bearing: 45,
+                tilt: 40,
+                target: LatLng(position.latitude, position.longitude),
+                zoom: 16)));
+      });
+    }
+  }
+
+  onboard(position) async {
+    Marker driverMarker = Marker(
+        markerId: const MarkerId('destination'),
+        infoWindow: InfoWindow(
+          title: widget.tripDetails['destination'],
+          snippet: 'Your destination',
+        ),
+        icon: BitmapDescriptor.defaultMarker,
+        position: LatLng(widget.tripDetails['destinationCoordinates']['lat'],
+            widget.tripDetails['destinationCoordinates']['long']));
+
+    setState(() {
+      _poly = Polyline(
+          color: Colors.blue,
+          polylineId: const PolylineId('route'),
+          points: [
+            // User Location
+            LatLng(position.latitude, position.longitude),
+            LatLng(widget.tripDetails['destinationCoordinates']['lat'],
+                widget.tripDetails['destinationCoordinates']['long']),
+          ],
+          width: 4);
+      markers.add(driverMarker);
     });
+    mapController?.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+        bearing: 45,
+        tilt: 40,
+        target: LatLng(position.latitude, position.longitude),
+        zoom: 16)));
   }
 
   @override
