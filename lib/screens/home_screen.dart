@@ -701,8 +701,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                         'Accept Booking',
                                                                     onPressed:
                                                                         () async {
-                                                                      Navigator.pop(
-                                                                          context1);
+                                                                      Navigator.of(
+                                                                              context1)
+                                                                          .pushReplacement(
+                                                                              MaterialPageRoute(builder: (context1) => TrackingOfUserPage(tripDetails: data.docs[index])));
                                                                       await FirebaseFirestore
                                                                           .instance
                                                                           .collection(
@@ -775,10 +777,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                       });
 
                                                                       // To Do: Booking - to show booking modal sheet
-                                                                      Navigator.of(
-                                                                              context)
-                                                                          .pushReplacement(
-                                                                              MaterialPageRoute(builder: (context) => TrackingOfUserPage(tripDetails: data.docs[index])));
                                                                     })
                                                               ],
                                                             );

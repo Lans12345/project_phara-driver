@@ -8,6 +8,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart' as loc;
+import 'package:phara_driver/widgets/button_widget.dart';
 
 import '../../plugins/my_location.dart';
 import '../../utils/colors.dart';
@@ -16,7 +17,7 @@ import '../home_screen.dart';
 import 'chat_page.dart';
 
 class TrackingOfUserPage extends StatefulWidget {
-  final Map tripDetails;
+  final tripDetails;
 
   const TrackingOfUserPage({super.key, required this.tripDetails});
 
@@ -40,6 +41,8 @@ class _TrackingOfUserPageState extends State<TrackingOfUserPage> {
 
   var hasLoaded = false;
 
+  bool passengerOnBoard = false;
+
   GoogleMapController? mapController;
 
   Set<Marker> markers = {};
@@ -55,30 +58,25 @@ class _TrackingOfUserPageState extends State<TrackingOfUserPage> {
     final CameraPosition camPosition = CameraPosition(
         target: LatLng(lat, long), zoom: 16, bearing: 45, tilt: 40);
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-          backgroundColor: Colors.white,
-          onPressed: (() {
-            mapController?.animateCamera(CameraUpdate.newCameraPosition(
-                CameraPosition(
-                    bearing: 45,
-                    tilt: 40,
-                    target: LatLng(lat, long),
-                    zoom: 16)));
-          }),
-          child: const Icon(
-            Icons.my_location_rounded,
-            color: Colors.red,
-          )),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 75),
+        child: FloatingActionButton(
+            backgroundColor: Colors.white,
+            onPressed: (() {
+              mapController?.animateCamera(CameraUpdate.newCameraPosition(
+                  CameraPosition(
+                      bearing: 45,
+                      tilt: 40,
+                      target: LatLng(lat, long),
+                      zoom: 16)));
+            }),
+            child: const Icon(
+              Icons.my_location_rounded,
+              color: Colors.red,
+            )),
+      ),
       appBar: AppBar(
-        leading: IconButton(
-          onPressed: () {
-            ratingsDialog();
-          },
-          icon: const Icon(
-            Icons.exit_to_app_rounded,
-            color: grey,
-          ),
-        ),
+        automaticallyImplyLeading: false,
         foregroundColor: grey,
         backgroundColor: Colors.white,
         title: Row(
@@ -143,10 +141,62 @@ class _TrackingOfUserPageState extends State<TrackingOfUserPage> {
                       width: 200,
                       child: Center(
                         child: TextRegular(
-                            text: 'Driver on the way',
+                            text: 'Passenger is waiting',
                             fontSize: 18,
                             color: Colors.white),
                       ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Visibility(
+                      visible: !passengerOnBoard,
+                      child: ButtonWidget(
+                          radius: 100,
+                          color: Colors.green,
+                          opacity: 1,
+                          label: 'Confirm Pickup',
+                          onPressed: () {
+                            showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                      title: const Text(
+                                        'Passenger onboard?',
+                                        style: TextStyle(
+                                            fontFamily: 'QBold',
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      actions: <Widget>[
+                                        MaterialButton(
+                                          onPressed: () =>
+                                              Navigator.of(context).pop(true),
+                                          child: const Text(
+                                            'Close',
+                                            style: TextStyle(
+                                                fontFamily: 'QRegular',
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                        MaterialButton(
+                                          onPressed: () async {
+                                            setState(() {
+                                              passengerOnBoard = true;
+                                            });
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: const Text(
+                                            'Continue',
+                                            style: TextStyle(
+                                                fontFamily: 'QRegular',
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                      ],
+                                    ));
+                          }),
                     ),
                   ),
                 ),
@@ -179,8 +229,8 @@ class _TrackingOfUserPageState extends State<TrackingOfUserPage> {
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
     FirebaseFirestore.instance
-        .collection('Drivers')
-        .where('id', isEqualTo: widget.tripDetails['driverId'])
+        .collection('Users')
+        .where('id', isEqualTo: widget.tripDetails['userId'])
         .get()
         .then((QuerySnapshot querySnapshot) async {
       for (var doc in querySnapshot.docs) {
@@ -190,13 +240,9 @@ class _TrackingOfUserPageState extends State<TrackingOfUserPage> {
               title: doc['name'],
               snippet: doc['number'],
             ),
-            icon: await BitmapDescriptor.fromAssetImage(
-              const ImageConfiguration(
-                size: Size(12, 12),
-              ),
-              'assets/images/driver.png',
-            ),
-            position: LatLng(doc['location']['lat'], doc['location']['long']));
+            icon: BitmapDescriptor.defaultMarker,
+            position: LatLng(widget.tripDetails['originCoordinates']['lat'],
+                widget.tripDetails['originCoordinates']['long']));
 
         setState(() {
           _poly = Polyline(
@@ -205,7 +251,8 @@ class _TrackingOfUserPageState extends State<TrackingOfUserPage> {
               points: [
                 // User Location
                 LatLng(position.latitude, position.longitude),
-                LatLng(doc['location']['lat'], doc['location']['long']),
+                LatLng(widget.tripDetails['originCoordinates']['lat'],
+                    widget.tripDetails['originCoordinates']['long']),
               ],
               width: 4);
           markers.add(driverMarker);
