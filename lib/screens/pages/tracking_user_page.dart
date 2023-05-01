@@ -1,9 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -13,7 +11,6 @@ import 'package:phara_driver/widgets/button_widget.dart';
 import '../../plugins/my_location.dart';
 import '../../utils/colors.dart';
 import '../../widgets/text_widget.dart';
-import '../home_screen.dart';
 import 'chat_page.dart';
 
 class TrackingOfUserPage extends StatefulWidget {
@@ -185,6 +182,7 @@ class _TrackingOfUserPageState extends State<TrackingOfUserPage> {
                                             setState(() {
                                               passengerOnBoard = true;
                                             });
+
                                             Navigator.of(context).pop();
                                           },
                                           child: const Text(
@@ -259,71 +257,14 @@ class _TrackingOfUserPageState extends State<TrackingOfUserPage> {
           hasLoaded = true;
         });
       }
+
+      mapController?.animateCamera(CameraUpdate.newCameraPosition(
+          CameraPosition(
+              bearing: 45,
+              tilt: 40,
+              target: LatLng(position.latitude, position.longitude),
+              zoom: 16)));
     });
-  }
-
-  ratingsDialog() {
-    showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: TextRegular(
-                text: 'Rate your experience',
-                fontSize: 14,
-                color: Colors.black),
-            content: SizedBox(
-              height: 50,
-              child: Center(
-                child: RatingBar.builder(
-                  initialRating: 5,
-                  minRating: 1,
-                  direction: Axis.horizontal,
-                  allowHalfRating: false,
-                  itemCount: 5,
-                  itemPadding: const EdgeInsets.symmetric(horizontal: 0.0),
-                  itemBuilder: (context, _) => const Icon(
-                    Icons.star,
-                    color: Colors.amber,
-                  ),
-                  onRatingUpdate: (rating) async {
-                    int stars = 0;
-
-                    await FirebaseFirestore.instance
-                        .collection('Drivers')
-                        .where('id', isEqualTo: widget.tripDetails['driverId'])
-                        .get()
-                        .then((QuerySnapshot querySnapshot) {
-                      for (var doc in querySnapshot.docs) {
-                        setState(() {
-                          stars = doc['stars'];
-                        });
-                      }
-                    });
-                    await FirebaseFirestore.instance
-                        .collection('Drivers')
-                        .doc(widget.tripDetails['driverId'])
-                        .update({
-                      'ratings': FieldValue.arrayUnion(
-                          [FirebaseAuth.instance.currentUser!.uid]),
-                      'stars': stars + rating.toInt()
-                    });
-                  },
-                ),
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pushReplacement(MaterialPageRoute(
-                      builder: (context) => const HomeScreen()));
-                },
-                child: TextBold(
-                    text: 'Continue', fontSize: 18, color: Colors.amber),
-              ),
-            ],
-          );
-        });
   }
 
   @override
