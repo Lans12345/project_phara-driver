@@ -412,7 +412,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                   ),
                                 )
-                              : SizedBox();
+                              : const SizedBox();
                         }),
                   ),
                 ),
@@ -607,6 +607,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                               width: 150,
                                                                               child: TextRegular(text: 'Origin: ${data.docs[index]['origin']}', fontSize: 11, color: grey),
                                                                             ),
+                                                                            const SizedBox(
+                                                                              height: 5,
+                                                                            ),
+                                                                            TextBold(
+                                                                                text: 'Fare: ₱${NumberFormat('#,##0.00', 'en_US').format(double.parse(data.docs[index]['fare']))}',
+                                                                                fontSize: 12,
+                                                                                color: Colors.green),
                                                                           ],
                                                                         ),
                                                                       ],
@@ -738,6 +745,30 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                                 false,
                                                                             'date':
                                                                                 DateTime.now(),
+                                                                          }
+                                                                        ]),
+                                                                      });
+                                                                      await FirebaseFirestore
+                                                                          .instance
+                                                                          .collection(
+                                                                              'Drivers')
+                                                                          .doc(data.docs[index]
+                                                                              [
+                                                                              'driverId'])
+                                                                          .update({
+                                                                        'history':
+                                                                            FieldValue.arrayUnion([
+                                                                          {
+                                                                            'date':
+                                                                                DateTime.now(),
+                                                                            'destination':
+                                                                                data.docs[index]['destination'],
+                                                                            'distance':
+                                                                                data.docs[index]['distance'],
+                                                                            'fare':
+                                                                                data.docs[index]['fare'],
+                                                                            'origin':
+                                                                                data.docs[index]['origin'],
                                                                           }
                                                                         ]),
                                                                       });
