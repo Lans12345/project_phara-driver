@@ -9,6 +9,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:phara_driver/screens/pages/messages_tab.dart';
+import 'package:phara_driver/screens/pages/tracking_user_page.dart';
 import 'package:phara_driver/screens/pages/trips_page.dart';
 import 'package:phara_driver/widgets/toast_widget.dart';
 
@@ -774,6 +775,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                       });
 
                                                                       // To Do: Booking - to show booking modal sheet
+                                                                      Navigator.of(
+                                                                              context)
+                                                                          .pushReplacement(
+                                                                              MaterialPageRoute(builder: (context) => TrackingOfUserPage(tripDetails: data.docs[index])));
                                                                     })
                                                               ],
                                                             );

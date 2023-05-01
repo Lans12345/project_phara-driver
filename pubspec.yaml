@@ -58,6 +58,7 @@ dependencies:
   pie_chart:
   syncfusion_flutter_charts: ^19.1.54
   wakelock:
+  location: ^4.4.0
 
 dev_dependencies:
   flutter_test:
