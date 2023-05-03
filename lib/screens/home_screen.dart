@@ -159,7 +159,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     )),
               ],
             ),
-            drawer: Drawer(
+            drawer: const Drawer(
               child: DrawerWidget(),
             ),
             appBar: AppBar(
@@ -578,13 +578,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                   children: [
                                                                     Row(
                                                                       children: [
-                                                                        const CircleAvatar(
+                                                                        CircleAvatar(
                                                                           minRadius:
                                                                               25,
                                                                           maxRadius:
                                                                               25,
                                                                           backgroundImage:
-                                                                              AssetImage('assets/images/profile.png'),
+                                                                              NetworkImage(data.docs[index]['userProfile']),
                                                                         ),
                                                                         const SizedBox(
                                                                           width:
@@ -920,11 +920,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                     );
                                   });
                             },
-                            leading: const CircleAvatar(
+                            leading: CircleAvatar(
                               minRadius: 15,
                               maxRadius: 15,
                               backgroundImage:
-                                  AssetImage('assets/images/profile.png'),
+                                  NetworkImage(data.docs[index]['userProfile']),
                             ),
                             title: TextBold(
                                 text: 'To: ${data.docs[index]['destination']}',
