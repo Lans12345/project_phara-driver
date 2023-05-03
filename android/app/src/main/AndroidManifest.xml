@@ -25,7 +25,7 @@
     </intent>
     </queries>
    <application
-        android:label="phara_driver"
+        android:label="PHara - Driver"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

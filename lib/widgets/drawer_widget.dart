@@ -300,7 +300,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                     leading: const Icon(Icons.home),
                     title: TextRegular(
                       text: 'Home',
-                      fontSize: 12,
+                      fontSize: 14,
                       color: Colors.grey,
                     ),
                     onTap: () {
@@ -312,7 +312,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                     leading: const Icon(Icons.message_outlined),
                     title: TextRegular(
                       text: 'Messages',
-                      fontSize: 12,
+                      fontSize: 14,
                       color: Colors.grey,
                     ),
                     onTap: () {
@@ -324,7 +324,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                     leading: const Icon(Icons.stacked_line_chart_sharp),
                     title: TextRegular(
                       text: 'Earnings report',
-                      fontSize: 12,
+                      fontSize: 14,
                       color: Colors.grey,
                     ),
                     onTap: () {
@@ -336,7 +336,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                     leading: const Icon(Icons.tab_rounded),
                     title: TextRegular(
                       text: 'Recent trips',
-                      fontSize: 12,
+                      fontSize: 14,
                       color: Colors.grey,
                     ),
                     onTap: () {
@@ -350,7 +350,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                     ),
                     title: TextRegular(
                       text: 'Contact us',
-                      fontSize: 12,
+                      fontSize: 14,
                       color: Colors.grey,
                     ),
                     onTap: () {
@@ -364,7 +364,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                     ),
                     title: TextRegular(
                       text: 'About us',
-                      fontSize: 12,
+                      fontSize: 14,
                       color: Colors.grey,
                     ),
                     onTap: () {
@@ -376,7 +376,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                     leading: const Icon(Icons.logout),
                     title: TextRegular(
                       text: 'Logout',
-                      fontSize: 12,
+                      fontSize: 14,
                       color: Colors.grey,
                     ),
                     onTap: () {
