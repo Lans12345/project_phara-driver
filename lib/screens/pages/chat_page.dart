@@ -89,10 +89,10 @@ class _ChatPageState extends State<ChatPage> {
           title: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              const CircleAvatar(
+              CircleAvatar(
                 minRadius: 22,
                 maxRadius: 22,
-                backgroundImage: AssetImage('assets/images/profile.png'),
+                backgroundImage: NetworkImage(userProfile),
               ),
               const SizedBox(
                 width: 10,

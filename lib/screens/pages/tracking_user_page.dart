@@ -102,15 +102,18 @@ class _TrackingOfUserPageState extends State<TrackingOfUserPage> {
         backgroundColor: Colors.white,
         title: Row(
           children: [
-            const CircleAvatar(
+            CircleAvatar(
               minRadius: 17.5,
               maxRadius: 17.5,
-              backgroundImage: AssetImage('assets/images/profile.png'),
+              backgroundImage: NetworkImage(userProfile),
             ),
             const SizedBox(
               width: 20,
             ),
-            TextRegular(text: 'Lance Olana', fontSize: 20, color: grey),
+            TextRegular(
+                text: widget.tripDetails['userName'],
+                fontSize: 20,
+                color: grey),
           ],
         ),
         actions: [
@@ -255,6 +258,8 @@ class _TrackingOfUserPageState extends State<TrackingOfUserPage> {
 
   late Polyline _poly;
 
+  String userProfile = '';
+
   getDrivers() async {
     if (passengerOnBoard == false) {
       Position position = await Geolocator.getCurrentPosition(
@@ -287,6 +292,7 @@ class _TrackingOfUserPageState extends State<TrackingOfUserPage> {
                 ],
                 width: 4);
             markers.add(driverMarker);
+            userProfile = doc['profilePicture'];
             hasLoaded = true;
           });
         }
