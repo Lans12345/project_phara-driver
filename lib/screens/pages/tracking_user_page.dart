@@ -1,6 +1,5 @@
 import 'dart:async';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -10,6 +9,7 @@ import 'package:phara_driver/widgets/button_widget.dart';
 
 import '../../plugins/my_location.dart';
 import '../../utils/colors.dart';
+import '../../utils/keys.dart';
 import '../../widgets/text_widget.dart';
 import 'chat_page.dart';
 
@@ -35,6 +35,11 @@ class _TrackingOfUserPageState extends State<TrackingOfUserPage> {
       getDrivers();
     });
   }
+
+  List<LatLng> polylineCoordinates = [];
+
+  PolylinePoints polylinePoints = PolylinePoints();
+  String googleAPIKey = kGoogleApiKey;
 
   var hasLoaded = false;
 
@@ -105,7 +110,7 @@ class _TrackingOfUserPageState extends State<TrackingOfUserPage> {
             CircleAvatar(
               minRadius: 17.5,
               maxRadius: 17.5,
-              backgroundImage: NetworkImage(userProfile),
+              backgroundImage: NetworkImage(widget.tripDetails['userProfile']),
             ),
             const SizedBox(
               width: 20,
@@ -147,6 +152,7 @@ class _TrackingOfUserPageState extends State<TrackingOfUserPage> {
                   initialCameraPosition: camPosition,
                   onMapCreated: (GoogleMapController controller) {
                     _controller.complete(controller);
+
                     setState(() {
                       mapController = controller;
                     });
@@ -261,81 +267,65 @@ class _TrackingOfUserPageState extends State<TrackingOfUserPage> {
   String userProfile = '';
 
   getDrivers() async {
-    if (passengerOnBoard == false) {
-      Position position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high);
-      FirebaseFirestore.instance
-          .collection('Users')
-          .where('id', isEqualTo: widget.tripDetails['userId'])
-          .get()
-          .then((QuerySnapshot querySnapshot) async {
-        for (var doc in querySnapshot.docs) {
-          Marker driverMarker = Marker(
-              markerId: MarkerId(doc['name']),
-              infoWindow: InfoWindow(
-                title: doc['name'],
-                snippet: doc['number'],
-              ),
-              icon: BitmapDescriptor.defaultMarker,
-              position: LatLng(widget.tripDetails['originCoordinates']['lat'],
-                  widget.tripDetails['originCoordinates']['long']));
+    Geolocator.getCurrentPosition().then((position) {
+      onboard(position);
+    }).catchError((error) {
+      print('Error getting location: $error');
+    });
 
-          setState(() {
-            _poly = Polyline(
-                color: Colors.red,
-                polylineId: const PolylineId('route'),
-                points: [
-                  // User Location
-                  LatLng(position.latitude, position.longitude),
-                  LatLng(widget.tripDetails['originCoordinates']['lat'],
-                      widget.tripDetails['originCoordinates']['long']),
-                ],
-                width: 4);
-            markers.add(driverMarker);
-            userProfile = doc['profilePicture'];
-            hasLoaded = true;
-          });
-        }
-
-        mapController?.animateCamera(CameraUpdate.newCameraPosition(
-            CameraPosition(
-                bearing: 45,
-                tilt: 40,
-                target: LatLng(position.latitude, position.longitude),
-                zoom: 16)));
-      });
-    }
+    setState(() {
+      hasLoaded = true;
+    });
   }
 
   onboard(position) async {
     Marker driverMarker = Marker(
         markerId: const MarkerId('destination'),
         infoWindow: InfoWindow(
-          title: widget.tripDetails['destination'],
+          title: passengerOnBoard
+              ? widget.tripDetails['destination']
+              : widget.tripDetails['origin'],
           snippet: 'Your destination',
         ),
         icon: BitmapDescriptor.defaultMarker,
-        position: LatLng(widget.tripDetails['destinationCoordinates']['lat'],
-            widget.tripDetails['destinationCoordinates']['long']));
+        position: passengerOnBoard == false
+            ? LatLng(widget.tripDetails['originCoordinates']['lat'],
+                widget.tripDetails['originCoordinates']['long'])
+            : LatLng(widget.tripDetails['destinationCoordinates']['lat'],
+                widget.tripDetails['destinationCoordinates']['long']));
 
-    setState(() {
-      _poly = Polyline(
-          color: Colors.blue,
-          polylineId: const PolylineId('route'),
-          points: [
-            // User Location
-            LatLng(position.latitude, position.longitude),
-            LatLng(widget.tripDetails['destinationCoordinates']['lat'],
-                widget.tripDetails['destinationCoordinates']['long']),
-          ],
-          width: 4);
-      markers.add(driverMarker);
-    });
-    mapController?.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
-        bearing: 45,
-        tilt: 40,
-        target: LatLng(position.latitude, position.longitude),
-        zoom: 16)));
+    Geolocator.getCurrentPosition().then(
+      (value) async {
+        PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+            googleAPIKey,
+            PointLatLng(value.latitude, value.longitude),
+            passengerOnBoard == false
+                ? PointLatLng(widget.tripDetails['originCoordinates']['lat'],
+                    widget.tripDetails['originCoordinates']['long'])
+                : PointLatLng(
+                    widget.tripDetails['destinationCoordinates']['lat'],
+                    widget.tripDetails['destinationCoordinates']['long']));
+        if (result.points.isNotEmpty) {
+          polylineCoordinates = result.points
+              .map((point) => LatLng(point.latitude, point.longitude))
+              .toList();
+        }
+        setState(() {
+          _poly = Polyline(
+              color: passengerOnBoard == false ? Colors.red : Colors.blue,
+              polylineId: const PolylineId('route'),
+              points: polylineCoordinates,
+              width: 4);
+          markers.add(driverMarker);
+        });
+        mapController?.animateCamera(CameraUpdate.newCameraPosition(
+            CameraPosition(
+                bearing: 45,
+                tilt: 40,
+                target: LatLng(position.latitude, position.longitude),
+                zoom: 18)));
+      },
+    );
   }
 
   @override
