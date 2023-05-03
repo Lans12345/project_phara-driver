@@ -25,7 +25,7 @@ class _MessagesTabState extends State<MessagesTab> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: DrawerWidget(),
+      drawer: const DrawerWidget(),
       appBar: AppbarWidget('Messages'),
       body: Column(
         children: [
@@ -76,11 +76,11 @@ class _MessagesTabState extends State<MessagesTab> {
                                                 'User name',
                                           )));
                                 },
-                                leading: const CircleAvatar(
+                                leading: CircleAvatar(
                                   maxRadius: 25,
                                   minRadius: 25,
-                                  backgroundImage:
-                                      AssetImage('assets/images/profile.png'),
+                                  backgroundImage: NetworkImage(
+                                      data.docs[index]['userProfile']),
                                 ),
                                 title: data.docs[index]['seen'] == true
                                     ? TextRegular(

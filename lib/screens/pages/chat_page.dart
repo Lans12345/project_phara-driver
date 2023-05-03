@@ -23,6 +23,7 @@ class _ChatPageState extends State<ChatPage> {
   void initState() {
     super.initState();
     getDriverData();
+    getMyData();
   }
 
   final messageController = TextEditingController();
@@ -37,6 +38,8 @@ class _ChatPageState extends State<ChatPage> {
 
   bool hasLoaded = false;
 
+  String userProfile = '';
+
   getDriverData() {
     FirebaseFirestore.instance
         .collection('Users')
@@ -46,6 +49,23 @@ class _ChatPageState extends State<ChatPage> {
       for (var doc in querySnapshot.docs) {
         setState(() {
           driverContactNumber = doc['number'];
+          userProfile = doc['profilePicture'];
+        });
+      }
+    });
+  }
+
+  String myProfile = '';
+
+  getMyData() {
+    FirebaseFirestore.instance
+        .collection('Drivers')
+        .where('id', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+        .get()
+        .then((QuerySnapshot querySnapshot) async {
+      for (var doc in querySnapshot.docs) {
+        setState(() {
+          myProfile = doc['profilePicture'];
           hasLoaded = true;
         });
       }
@@ -153,14 +173,16 @@ class _ChatPageState extends State<ChatPage> {
                                           messages[index]['sender'] !=
                                                   FirebaseAuth
                                                       .instance.currentUser!.uid
-                                              ? const Padding(
+                                              ? Padding(
                                                   padding:
-                                                      EdgeInsets.only(left: 5),
+                                                      const EdgeInsets.only(
+                                                          left: 5),
                                                   child: CircleAvatar(
                                                     minRadius: 15,
                                                     maxRadius: 15,
-                                                    backgroundImage: AssetImage(
-                                                        'assets/images/profile.png'),
+                                                    backgroundImage:
+                                                        NetworkImage(
+                                                            userProfile),
                                                   ))
                                               : const SizedBox(),
                                           Column(
@@ -239,14 +261,15 @@ class _ChatPageState extends State<ChatPage> {
                                           messages[index]['sender'] ==
                                                   FirebaseAuth
                                                       .instance.currentUser!.uid
-                                              ? const Padding(
+                                              ? Padding(
                                                   padding:
-                                                      EdgeInsets.only(right: 5),
+                                                      const EdgeInsets.only(
+                                                          right: 5),
                                                   child: CircleAvatar(
                                                     minRadius: 15,
                                                     maxRadius: 15,
-                                                    backgroundImage: NetworkImage(
-                                                        'https://i.pinimg.com/originals/45/e1/9c/45e19c74f5c293c27a7ec8aee6a92936.jpg'),
+                                                    backgroundImage:
+                                                        NetworkImage(myProfile),
                                                   ),
                                                 )
                                               : const SizedBox(),
