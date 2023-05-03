@@ -143,6 +143,16 @@ class SignupScreen extends StatelessWidget {
       showToast("Registered Succesfully!");
       Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => const SplashToHomeScreen()));
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        showToast('The password provided is too weak.');
+      } else if (e.code == 'email-already-in-use') {
+        showToast('The account already exists for that username.');
+      } else if (e.code == 'invalid-email') {
+        showToast('The username is not valid.');
+      } else {
+        showToast(e.toString());
+      }
     } on Exception catch (e) {
       showToast("An error occurred: $e");
     }
