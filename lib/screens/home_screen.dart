@@ -96,13 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         return const Center(child: Text('Error'));
                       }
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Padding(
-                          padding: EdgeInsets.only(top: 50),
-                          child: Center(
-                              child: CircularProgressIndicator(
-                            color: Colors.black,
-                          )),
-                        );
+                        return const SizedBox();
                       }
 
                       final data = snapshot.requireData;
@@ -182,13 +176,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         return const Center(child: Text('Error'));
                       }
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Padding(
-                          padding: EdgeInsets.only(top: 50),
-                          child: Center(
-                              child: CircularProgressIndicator(
-                            color: Colors.black,
-                          )),
-                        );
+                        return const SizedBox();
                       }
 
                       final data = snapshot.requireData;
@@ -224,13 +212,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     builder:
                         (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
                       if (!snapshot.hasData) {
-                        return const Center(child: Text('Loading'));
+                        return const SizedBox();
                       } else if (snapshot.hasError) {
                         return const Center(
                             child: Text('Something went wrong'));
                       } else if (snapshot.connectionState ==
                           ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
+                        return const SizedBox();
                       }
                       dynamic data = snapshot.data;
 
@@ -295,13 +283,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     builder:
                         (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
                       if (!snapshot.hasData) {
-                        return const Center(child: Text('Loading'));
+                        return const SizedBox();
                       } else if (snapshot.hasError) {
                         return const Center(
                             child: Text('Something went wrong'));
                       } else if (snapshot.connectionState ==
                           ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
+                        return const SizedBox();
                       }
                       dynamic data = snapshot.data;
                       return Container(
@@ -377,13 +365,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           }
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return const Padding(
-                              padding: EdgeInsets.only(top: 50),
-                              child: Center(
-                                  child: CircularProgressIndicator(
-                                color: Colors.black,
-                              )),
-                            );
+                            return const SizedBox();
                           }
 
                           final data = snapshot.requireData;
