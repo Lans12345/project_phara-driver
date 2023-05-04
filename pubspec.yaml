@@ -59,6 +59,8 @@ dependencies:
   syncfusion_flutter_charts: ^19.1.54
   wakelock:
   location: ^4.4.0
+  custom_map_markers:
+  flutter_spinkit:
 
 dev_dependencies:
   flutter_test:
