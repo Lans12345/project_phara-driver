@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:custom_map_markers/custom_map_markers.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -411,37 +412,14 @@ class _HomeScreenState extends State<HomeScreen> {
                         }),
                   ),
                 ),
-                // Center(
-                //   child: Column(
-                //     crossAxisAlignment: CrossAxisAlignment.center,
-                //     mainAxisAlignment: MainAxisAlignment.end,
-                //     children: [
-                //       ButtonWidget(
-                //           width: 175,
-                //           radius: 100,
-                //           opacity: 1,
-                //           color: Colors.green,
-                //           label: 'View passenger',
-                //           onPressed: (() {
-                //             showModalBottomSheet(
-                //                 isScrollControlled: true,
-                //                 context: context,
-                //                 builder: ((context) {
-                //                   return BookBottomSheetWidget();
-                //                 }));
-                //           })),
-                //       const SizedBox(
-                //         height: 25,
-                //       ),
-                //     ],
-                //   ),
-                // )
               ],
             ),
           )
         : const Scaffold(
             body: Center(
-              child: CircularProgressIndicator(),
+              child: SpinKitChasingDots(
+                color: grey,
+              ),
             ),
           );
   }
