@@ -15,7 +15,7 @@ class TripsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: DrawerWidget(),
+      drawer: const DrawerWidget(),
       appBar: AppbarWidget('Recent Trips'),
       body: StreamBuilder<DocumentSnapshot>(
           stream: FirebaseData().userData,

@@ -50,7 +50,7 @@ class _ReportsPageState extends State<ReportsPage> {
       ChartData('Sun', sunday),
     ];
     return Scaffold(
-        drawer: DrawerWidget(),
+        drawer: const DrawerWidget(),
         appBar: AppbarWidget('Earnings report'),
         body: hasLoaded
             ? SingleChildScrollView(
