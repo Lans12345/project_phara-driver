@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:phara_driver/screens/pages/delivery/delivery_history_page.dart';
 import 'package:phara_driver/screens/pages/delivery/delivery_map.dart';
 import 'package:phara_driver/widgets/drawer_widget.dart';
 
@@ -22,7 +23,10 @@ class DeliveryPage extends StatelessWidget {
         title: TextRegular(text: 'Delivery', fontSize: 24, color: grey),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const DeliveryHistoryPage()));
+            },
             icon: const Icon(
               Icons.history,
               color: grey,
