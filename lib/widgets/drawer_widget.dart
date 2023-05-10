@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:phara_driver/screens/pages/delivery/delivery_page.dart';
 import 'package:phara_driver/screens/pages/reports_page.dart';
 import 'package:phara_driver/widgets/text_widget.dart';
 import 'package:phara_driver/widgets/textfield_widget.dart';
@@ -300,6 +301,18 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                     leading: const Icon(Icons.home),
                     title: TextRegular(
                       text: 'Home',
+                      fontSize: 14,
+                      color: Colors.grey,
+                    ),
+                    onTap: () {
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(
+                          builder: (context) => const DeliveryPage()));
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.delivery_dining_outlined),
+                    title: TextRegular(
+                      text: 'Delivery',
                       fontSize: 14,
                       color: Colors.grey,
                     ),

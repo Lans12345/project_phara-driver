@@ -338,7 +338,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     customMarkers: _customMarkers,
                     builder: (BuildContext context, Set<Marker>? markers1) {
                       if (markers1 == null) {
-                        return  Center(child: SpinKitPulse());
+                        return Center(child: SpinKitPulse());
                       }
                       return GoogleMap(
                         buildingsEnabled: true,
