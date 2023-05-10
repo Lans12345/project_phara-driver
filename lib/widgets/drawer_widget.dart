@@ -9,7 +9,7 @@ import 'package:phara_driver/screens/pages/delivery/delivery_page.dart';
 import 'package:phara_driver/screens/pages/reports_page.dart';
 import 'package:phara_driver/widgets/text_widget.dart';
 import 'package:phara_driver/widgets/textfield_widget.dart';
-
+import 'package:badges/badges.dart' as b;
 import '../screens/auth/login_screen.dart';
 import '../screens/home_screen.dart';
 import '../screens/pages/aboutus_page.dart';
@@ -28,6 +28,12 @@ class DrawerWidget extends StatefulWidget {
 }
 
 class _DrawerWidgetState extends State<DrawerWidget> {
+  @override
+  void initState() {
+    super.initState();
+    getBadgeCount();
+  }
+
   final numberController = TextEditingController();
 
   late String fileName = '';
@@ -35,6 +41,33 @@ class _DrawerWidgetState extends State<DrawerWidget> {
   late File imageFile;
 
   late String imageURL = '';
+
+  int messageBadge = 0;
+  int deliveryBadge = 0;
+
+  getBadgeCount() {
+    FirebaseFirestore.instance
+        .collection('Delivery')
+        .where('driverId', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+        .where('status', isEqualTo: 'Pending')
+        .get()
+        .then((QuerySnapshot querySnapshot) async {
+      setState(() {
+        deliveryBadge = querySnapshot.docs.length;
+      });
+    });
+
+    FirebaseFirestore.instance
+        .collection('Messages')
+        .where('driverId', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+        .where('seen', isEqualTo: false)
+        .get()
+        .then((QuerySnapshot querySnapshot) async {
+      setState(() {
+        messageBadge = querySnapshot.docs.length;
+      });
+    });
+  }
 
   Future<void> uploadPicture(String inputSource) async {
     final picker = ImagePicker();
@@ -310,7 +343,15 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                     },
                   ),
                   ListTile(
-                    leading: const Icon(Icons.delivery_dining_outlined),
+                    leading: b.Badge(
+                        showBadge: deliveryBadge != 0,
+                        badgeContent: TextRegular(
+                            text: deliveryBadge.toString(),
+                            fontSize: 12,
+                            color: Colors.white),
+                        badgeStyle:
+                            b.BadgeStyle(badgeColor: Colors.amber[600]!),
+                        child: const Icon(Icons.delivery_dining_outlined)),
                     title: TextRegular(
                       text: 'Delivery',
                       fontSize: 14,
@@ -322,7 +363,14 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                     },
                   ),
                   ListTile(
-                    leading: const Icon(Icons.message_outlined),
+                    leading: b.Badge(
+                        showBadge: messageBadge != 0,
+                        badgeContent: TextRegular(
+                            text: messageBadge.toString(),
+                            fontSize: 12,
+                            color: Colors.white),
+                        badgeStyle: b.BadgeStyle(badgeColor: Colors.red[600]!),
+                        child: const Icon(Icons.message_outlined)),
                     title: TextRegular(
                       text: 'Messages',
                       fontSize: 14,
