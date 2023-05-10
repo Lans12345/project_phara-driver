@@ -20,7 +20,8 @@ Future signup(name, number, address, email) async {
     'isActive': true,
     'notif': [],
     'profilePicture': 'https://cdn-icons-png.flaticon.com/256/149/149071.png',
-    'vehicle': ''
+    'vehicle': '',
+    'deliveryHistory': []
   };
 
   await docUser.set(json);

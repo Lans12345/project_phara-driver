@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -419,67 +420,95 @@ class DeliveryMapState extends State<DeliveryMap> {
                                                 onPressed: () async {
                                                   showDialog(
                                                       context: context,
-                                                      builder: (context) =>
-                                                          AlertDialog(
-                                                            title: const Text(
-                                                              'Pick-up Item Confirmation',
-                                                              style: TextStyle(
-                                                                  fontFamily:
-                                                                      'QBold',
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold),
-                                                            ),
-                                                            content: const Text(
-                                                              'Item picked up?',
-                                                              style: TextStyle(
-                                                                  fontFamily:
-                                                                      'QRegular'),
-                                                            ),
-                                                            actions: <Widget>[
-                                                              MaterialButton(
-                                                                onPressed: () =>
-                                                                    Navigator.of(
-                                                                            context)
-                                                                        .pop(
-                                                                            true),
-                                                                child:
+                                                      builder:
+                                                          (context) =>
+                                                              AlertDialog(
+                                                                title:
                                                                     const Text(
-                                                                  'Close',
+                                                                  'Pick-up Item Confirmation',
                                                                   style: TextStyle(
                                                                       fontFamily:
-                                                                          'QRegular',
+                                                                          'QBold',
                                                                       fontWeight:
                                                                           FontWeight
                                                                               .bold),
                                                                 ),
-                                                              ),
-                                                              MaterialButton(
-                                                                onPressed:
-                                                                    () async {
-                                                                  setState(() {
-                                                                    bookingAccepted =
-                                                                        true;
-                                                                    bookingAccepted2 =
-                                                                        true;
-                                                                  });
-                                                                  Navigator.of(
-                                                                          context)
-                                                                      .pop();
-                                                                },
-                                                                child:
+                                                                content:
                                                                     const Text(
-                                                                  'Continue',
+                                                                  'Item picked up?',
                                                                   style: TextStyle(
                                                                       fontFamily:
-                                                                          'QRegular',
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold),
+                                                                          'QRegular'),
                                                                 ),
-                                                              ),
-                                                            ],
-                                                          ));
+                                                                actions: <
+                                                                    Widget>[
+                                                                  MaterialButton(
+                                                                    onPressed: () =>
+                                                                        Navigator.of(context)
+                                                                            .pop(true),
+                                                                    child:
+                                                                        const Text(
+                                                                      'Close',
+                                                                      style: TextStyle(
+                                                                          fontFamily:
+                                                                              'QRegular',
+                                                                          fontWeight:
+                                                                              FontWeight.bold),
+                                                                    ),
+                                                                  ),
+                                                                  MaterialButton(
+                                                                    onPressed:
+                                                                        () async {
+                                                                      setState(
+                                                                          () {
+                                                                        bookingAccepted =
+                                                                            true;
+                                                                        bookingAccepted2 =
+                                                                            true;
+                                                                      });
+
+                                                                      Navigator.of(
+                                                                              context)
+                                                                          .pop();
+
+                                                                      await FirebaseFirestore
+                                                                          .instance
+                                                                          .collection(
+                                                                              'Drivers')
+                                                                          .doc(FirebaseAuth
+                                                                              .instance
+                                                                              .currentUser!
+                                                                              .uid)
+                                                                          .update({
+                                                                        'deliveryHistory':
+                                                                            FieldValue.arrayUnion([
+                                                                          {
+                                                                            'origin':
+                                                                                widget.bookingData['origin'],
+                                                                            'destination':
+                                                                                widget.bookingData['destination'],
+                                                                            'distance':
+                                                                                widget.bookingData['distance'],
+                                                                            'payment':
+                                                                                widget.bookingData['fare'],
+                                                                            'date':
+                                                                                DateTime.now(),
+                                                                          }
+                                                                        ]),
+                                                                      });
+                                                                    },
+                                                                    child:
+                                                                        const Text(
+                                                                      'Continue',
+                                                                      style: TextStyle(
+                                                                          fontFamily:
+                                                                              'QRegular',
+                                                                          fontWeight:
+                                                                              FontWeight.bold),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ));
                                                 },
                                               )
                                             : const SizedBox()
