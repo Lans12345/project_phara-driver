@@ -306,7 +306,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                     ),
                     onTap: () {
                       Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) => const DeliveryPage()));
+                          builder: (context) => const HomeScreen()));
                     },
                   ),
                   ListTile(
@@ -318,7 +318,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                     ),
                     onTap: () {
                       Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) => const HomeScreen()));
+                          builder: (context) => const DeliveryPage()));
                     },
                   ),
                   ListTile(
