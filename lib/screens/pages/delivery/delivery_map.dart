@@ -393,6 +393,28 @@ class DeliveryMapState extends State<DeliveryMap> {
                                                                 'status':
                                                                     'Accepted'
                                                               });
+
+                                                              await FirebaseFirestore
+                                                                  .instance
+                                                                  .collection(
+                                                                      'Users')
+                                                                  .doc(widget
+                                                                          .bookingData[
+                                                                      'userId'])
+                                                                  .update({
+                                                                'notif': FieldValue
+                                                                    .arrayUnion([
+                                                                  {
+                                                                    'notif':
+                                                                        'Youre delivery booking was accepted! Driver on the way',
+                                                                    'read':
+                                                                        false,
+                                                                    'date':
+                                                                        DateTime
+                                                                            .now(),
+                                                                  }
+                                                                ]),
+                                                              });
                                                             },
                                                             child: const Text(
                                                               'Continue',
