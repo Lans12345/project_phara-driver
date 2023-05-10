@@ -12,6 +12,7 @@ import '../../../utils/colors.dart';
 import '../../../utils/keys.dart';
 import '../../../widgets/button_widget.dart';
 import '../../../widgets/text_widget.dart';
+import 'delivery_history_page.dart';
 
 class DeliveryMap extends StatefulWidget {
   final bookingData;
@@ -66,6 +67,7 @@ class DeliveryMapState extends State<DeliveryMap> {
   bool bookingAccepted = false;
   bool bookingAccepted1 = false;
   bool bookingAccepted2 = false;
+  bool delivered = false;
 
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
@@ -415,6 +417,19 @@ class DeliveryMapState extends State<DeliveryMap> {
                                                                   }
                                                                 ]),
                                                               });
+
+                                                              FirebaseFirestore
+                                                                  .instance
+                                                                  .collection(
+                                                                      'Drivers')
+                                                                  .doc(FirebaseAuth
+                                                                      .instance
+                                                                      .currentUser!
+                                                                      .uid)
+                                                                  .update({
+                                                                'isActive':
+                                                                    false,
+                                                              });
                                                             },
                                                             child: const Text(
                                                               'Continue',
@@ -533,7 +548,86 @@ class DeliveryMapState extends State<DeliveryMap> {
                                                               ));
                                                 },
                                               )
-                                            : const SizedBox()
+                                            : delivered == false
+                                                ? ButtonWidget(
+                                                    width: 250,
+                                                    fontSize: 15,
+                                                    color: Colors.blue,
+                                                    height: 40,
+                                                    radius: 100,
+                                                    opacity: 1,
+                                                    label: 'Confirm Delivery',
+                                                    onPressed: () async {
+                                                      showDialog(
+                                                          context: context,
+                                                          builder:
+                                                              (context) =>
+                                                                  AlertDialog(
+                                                                    title:
+                                                                        const Text(
+                                                                      'Delivery Confirmation',
+                                                                      style: TextStyle(
+                                                                          fontFamily:
+                                                                              'QBold',
+                                                                          fontWeight:
+                                                                              FontWeight.bold),
+                                                                    ),
+                                                                    content:
+                                                                        const Text(
+                                                                      'Item delivered?',
+                                                                      style: TextStyle(
+                                                                          fontFamily:
+                                                                              'QRegular'),
+                                                                    ),
+                                                                    actions: <
+                                                                        Widget>[
+                                                                      MaterialButton(
+                                                                        onPressed:
+                                                                            () =>
+                                                                                Navigator.of(context).pop(true),
+                                                                        child:
+                                                                            const Text(
+                                                                          'Close',
+                                                                          style: TextStyle(
+                                                                              fontFamily: 'QRegular',
+                                                                              fontWeight: FontWeight.bold),
+                                                                        ),
+                                                                      ),
+                                                                      MaterialButton(
+                                                                        onPressed:
+                                                                            () async {
+                                                                          setState(
+                                                                              () {
+                                                                            delivered =
+                                                                                true;
+                                                                          });
+                                                                          Navigator.of(context)
+                                                                              .pop();
+                                                                          Navigator.of(context)
+                                                                              .push(MaterialPageRoute(builder: (context) => const DeliveryHistoryPage()));
+
+                                                                          await FirebaseFirestore
+                                                                              .instance
+                                                                              .collection('Drivers')
+                                                                              .doc(FirebaseAuth.instance.currentUser!.uid)
+                                                                              .update({
+                                                                            'isActive':
+                                                                                true,
+                                                                          });
+                                                                        },
+                                                                        child:
+                                                                            const Text(
+                                                                          'Continue',
+                                                                          style: TextStyle(
+                                                                              fontFamily: 'QRegular',
+                                                                              fontWeight: FontWeight.bold),
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ));
+                                                    },
+                                                  )
+                                                : const SizedBox()
                                   ],
                                 ),
                               ),
