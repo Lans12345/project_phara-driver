@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:phara_driver/screens/pages/delivery/delivery_map.dart';
 import 'package:phara_driver/widgets/drawer_widget.dart';
 
 import '../../../utils/colors.dart';
@@ -86,9 +87,17 @@ class DeliveryPage extends StatelessWidget {
                         width: 65,
                         child: Row(
                           children: [
-                            const Icon(
-                              Icons.remove_red_eye_outlined,
-                              color: grey,
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => DeliveryMap(
+                                          bookingData: data.docs[index],
+                                        )));
+                              },
+                              child: const Icon(
+                                Icons.remove_red_eye_outlined,
+                                color: grey,
+                              ),
                             ),
                             const SizedBox(
                               width: 10,
