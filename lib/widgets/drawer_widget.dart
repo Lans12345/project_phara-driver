@@ -317,7 +317,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                       color: Colors.grey,
                     ),
                     onTap: () {
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(
+                      Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => const DeliveryPage()));
                     },
                   ),
