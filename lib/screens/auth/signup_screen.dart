@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:phara_driver/screens/terms_conditions_page.dart';
 
 import '../../services/signup.dart';
 import '../../utils/colors.dart';
@@ -181,6 +182,31 @@ class SignupScreen extends StatelessWidget {
                           register(context);
                         }
                       }),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Center(
+                    child: TextRegular(
+                        text: 'Signing up means you agree to our',
+                        fontSize: 12,
+                        color: Colors.white),
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  Center(
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) =>
+                                const TermsAndConditionsPage()));
+                      },
+                      child: TextBold(
+                          text: 'Terms and Conditions',
+                          fontSize: 14,
+                          color: Colors.white),
                     ),
                   ),
                   const SizedBox(
