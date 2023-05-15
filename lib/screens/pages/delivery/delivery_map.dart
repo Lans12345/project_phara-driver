@@ -198,15 +198,15 @@ class DeliveryMapState extends State<DeliveryMap> {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
                   child: DraggableScrollableSheet(
-                      initialChildSize: 0.34,
+                      initialChildSize: 0.5,
                       minChildSize: 0.15,
-                      maxChildSize: 0.34,
+                      maxChildSize: 0.5,
                       builder: (context, scrollController) {
                         return Card(
                           elevation: 3,
                           child: Container(
                             width: double.infinity,
-                            height: 220,
+                            height: 400,
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(20),
@@ -229,6 +229,96 @@ class DeliveryMapState extends State<DeliveryMap> {
                                         color: grey),
                                     const SizedBox(
                                       height: 10,
+                                    ),
+                                    Container(
+                                      height: 35,
+                                      width: 300,
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(100)),
+                                      child: TextFormField(
+                                        enabled: false,
+                                        decoration: InputDecoration(
+                                          prefixIcon: const Icon(
+                                            Icons.account_circle_outlined,
+                                            color: grey,
+                                          ),
+                                          fillColor: Colors.white,
+                                          filled: true,
+                                          enabledBorder: OutlineInputBorder(
+                                            borderSide: const BorderSide(
+                                                width: 1, color: grey),
+                                            borderRadius:
+                                                BorderRadius.circular(100),
+                                          ),
+                                          disabledBorder: OutlineInputBorder(
+                                            borderSide: const BorderSide(
+                                                width: 1, color: grey),
+                                            borderRadius:
+                                                BorderRadius.circular(100),
+                                          ),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderSide: const BorderSide(
+                                                width: 1, color: Colors.black),
+                                            borderRadius:
+                                                BorderRadius.circular(100),
+                                          ),
+                                          label: TextRegular(
+                                              text:
+                                                  'Receiver: ${widget.bookingData['receiver']}',
+                                              fontSize: 14,
+                                              color: Colors.black),
+                                          border: InputBorder.none,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    Container(
+                                      height: 35,
+                                      width: 300,
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(100)),
+                                      child: TextFormField(
+                                        enabled: false,
+                                        decoration: InputDecoration(
+                                          prefixIcon: const Icon(
+                                            Icons.phone,
+                                            color: grey,
+                                          ),
+                                          fillColor: Colors.white,
+                                          filled: true,
+                                          enabledBorder: OutlineInputBorder(
+                                            borderSide: const BorderSide(
+                                                width: 1, color: grey),
+                                            borderRadius:
+                                                BorderRadius.circular(100),
+                                          ),
+                                          disabledBorder: OutlineInputBorder(
+                                            borderSide: const BorderSide(
+                                                width: 1, color: grey),
+                                            borderRadius:
+                                                BorderRadius.circular(100),
+                                          ),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderSide: const BorderSide(
+                                                width: 1, color: Colors.black),
+                                            borderRadius:
+                                                BorderRadius.circular(100),
+                                          ),
+                                          label: TextRegular(
+                                              text:
+                                                  'Contact No.: ${widget.bookingData['receiverNumber']}',
+                                              fontSize: 14,
+                                              color: Colors.black),
+                                          border: InputBorder.none,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      height: 15,
                                     ),
                                     Container(
                                       height: 35,
@@ -277,7 +367,7 @@ class DeliveryMapState extends State<DeliveryMap> {
                                       ),
                                     ),
                                     const SizedBox(
-                                      height: 15,
+                                      height: 10,
                                     ),
                                     Container(
                                       height: 35,
