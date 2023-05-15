@@ -59,6 +59,12 @@ class DeliveryPage extends StatelessWidget {
                   padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
                   child: Card(
                     child: ListTile(
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => DeliveryMap(
+                                  bookingData: data.docs[index],
+                                )));
+                      },
                       leading: CircleAvatar(
                         minRadius: 18,
                         maxRadius: 18,
