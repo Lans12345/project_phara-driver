@@ -20,6 +20,7 @@ class SignupScreen extends StatelessWidget {
   final confirmPasswordController = TextEditingController();
   final vehicleController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  final platenumberController = TextEditingController();
 
   SignupScreen({super.key});
 
@@ -104,6 +105,20 @@ class SignupScreen extends StatelessWidget {
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter a vehicle model';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  TextFieldWidget(
+                    inputType: TextInputType.streetAddress,
+                    label: 'Plate Number of Vehicle',
+                    controller: platenumberController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a plate number';
                       }
                       return null;
                     },
@@ -247,8 +262,13 @@ class SignupScreen extends StatelessWidget {
           email: '${emailController.text}@driver.phara',
           password: passwordController.text);
 
-      signup(nameController.text, numberController.text, addressController.text,
-          emailController.text, vehicleController.text);
+      signup(
+          nameController.text,
+          numberController.text,
+          addressController.text,
+          emailController.text,
+          vehicleController.text,
+          platenumberController.text);
       await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: '${emailController.text}@driver.phara',
           password: passwordController.text);
