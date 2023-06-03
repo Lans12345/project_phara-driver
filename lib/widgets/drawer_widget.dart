@@ -228,7 +228,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                                                 fontSize: 14,
                                                 color: Colors.black),
                                             content: SizedBox(
-                                              height: 55,
+                                              height: 80,
                                               child: TextFieldWidget(
                                                   radius: 0,
                                                   inputType:
@@ -248,7 +248,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                                                     onPressed: (() {
                                                       Navigator.pop(context);
                                                     }),
-                                                    child: TextBold(
+                                                    child: TextRegular(
                                                         text: 'Close',
                                                         fontSize: 14,
                                                         color: grey),

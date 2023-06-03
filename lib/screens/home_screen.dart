@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:avatar_glow/avatar_glow.dart';
 import 'package:badges/badges.dart' as b;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:custom_map_markers/custom_map_markers.dart';
@@ -107,11 +108,20 @@ class _HomeScreenState extends State<HomeScreen> {
                                 color: Colors.white),
                             badgeStyle:
                                 b.BadgeStyle(badgeColor: Colors.amber[600]!),
-                            child: Icon(
-                              Icons.delivery_dining_outlined,
-                              color: data.docs.isNotEmpty
-                                  ? Colors.amber[600]
-                                  : grey,
+                            child: AvatarGlow(
+                              animate: data.docs.isNotEmpty,
+                              glowColor: Colors.amber,
+                              endRadius: 60.0,
+                              duration: const Duration(milliseconds: 2000),
+                              repeatPauseDuration:
+                                  const Duration(milliseconds: 100),
+                              repeat: true,
+                              child: Icon(
+                                Icons.delivery_dining_outlined,
+                                color: data.docs.isNotEmpty
+                                    ? Colors.amber[600]
+                                    : grey,
+                              ),
                             ),
                           ));
                     }),
@@ -153,11 +163,20 @@ class _HomeScreenState extends State<HomeScreen> {
                                 color: Colors.white),
                             badgeStyle:
                                 b.BadgeStyle(badgeColor: Colors.amber[600]!),
-                            child: Icon(
-                              Icons.groups,
-                              color: data.docs.isNotEmpty
-                                  ? Colors.amber[600]
-                                  : grey,
+                            child: AvatarGlow(
+                              animate: data.docs.isNotEmpty,
+                              glowColor: Colors.amber,
+                              endRadius: 60.0,
+                              duration: const Duration(milliseconds: 2000),
+                              repeatPauseDuration:
+                                  const Duration(milliseconds: 100),
+                              repeat: true,
+                              child: Icon(
+                                Icons.groups,
+                                color: data.docs.isNotEmpty
+                                    ? Colors.amber[600]
+                                    : grey,
+                              ),
                             ),
                           ));
                     }),
