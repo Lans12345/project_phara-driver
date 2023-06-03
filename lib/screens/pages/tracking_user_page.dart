@@ -168,12 +168,25 @@ class _TrackingOfUserPageState extends State<TrackingOfUserPage> {
                         borderRadius: BorderRadius.circular(50),
                       ),
                       height: 50,
-                      width: 200,
+                      width: passengerOnBoard ? 250 : 200,
                       child: Center(
-                        child: TextRegular(
-                            text: 'Passenger is waiting',
-                            fontSize: 18,
-                            color: Colors.white),
+                        child: passengerOnBoard
+                            ? Padding(
+                                padding:
+                                    const EdgeInsets.only(left: 10, right: 10),
+                                child: TextRegular(
+                                    text: passengerOnBoard
+                                        ? 'To: ${widget.tripDetails['destination']}'
+                                        : 'Passenger is waiting',
+                                    fontSize: passengerOnBoard ? 12 : 18,
+                                    color: Colors.white),
+                              )
+                            : TextRegular(
+                                text: passengerOnBoard
+                                    ? 'To: ${widget.tripDetails['destination']}'
+                                    : 'Passenger is waiting',
+                                fontSize: passengerOnBoard ? 12 : 18,
+                                color: Colors.white),
                       ),
                     ),
                   ),
