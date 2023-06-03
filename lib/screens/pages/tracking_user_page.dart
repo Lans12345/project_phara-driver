@@ -5,6 +5,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart' as loc;
 import 'package:phara_driver/screens/home_screen.dart';
+import 'package:phara_driver/utils/const.dart';
 import 'package:phara_driver/widgets/button_widget.dart';
 
 import '../../plugins/my_location.dart';
@@ -124,8 +125,9 @@ class _TrackingOfUserPageState extends State<TrackingOfUserPage> {
         actions: [
           IconButton(
             onPressed: () {
-              Navigator.of(context).pushReplacement(MaterialPageRoute(
+              Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => ChatPage(
+                        useCase: ChatpageUsecase.trackDriver,
                         userId: widget.tripDetails['userId'],
                         userName: widget.tripDetails['userName'],
                       )));

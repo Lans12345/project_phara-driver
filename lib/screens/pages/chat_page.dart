@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:phara_driver/utils/const.dart';
 
 import 'package:url_launcher/url_launcher.dart';
 
@@ -13,7 +14,12 @@ import 'messages_tab.dart';
 class ChatPage extends StatefulWidget {
   final String userId;
   final String userName;
-  const ChatPage({super.key, required this.userId, required this.userName});
+  final ChatpageUsecase useCase;
+  const ChatPage(
+      {super.key,
+      required this.userId,
+      required this.userName,
+      this.useCase = ChatpageUsecase.messages});
   @override
   State<ChatPage> createState() => _ChatPageState();
 }
@@ -83,6 +89,16 @@ class _ChatPageState extends State<ChatPage> {
       onWillPop: onWillPop,
       child: Scaffold(
         appBar: AppBar(
+          leading: IconButton(
+              onPressed: () {
+                if (widget.useCase == ChatpageUsecase.messages) {
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(
+                      builder: (context) => const MessagesTab()));
+                } else {
+                  Navigator.pop(context);
+                }
+              },
+              icon: const Icon(Icons.arrow_back)),
           centerTitle: true,
           foregroundColor: grey,
           backgroundColor: Colors.white,
