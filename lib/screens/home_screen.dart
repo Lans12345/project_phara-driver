@@ -40,16 +40,6 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     determinePosition();
     getLocation();
-    Geolocator.getCurrentPosition().then((position) {
-      FirebaseFirestore.instance
-          .collection('Drivers')
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .update({
-        'location': {'lat': position.latitude, 'long': position.longitude},
-      });
-    }).catchError((error) {
-      print('Error getting location: $error');
-    });
   }
 
   // final Completer<GoogleMapController> _controller =
@@ -85,6 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context1) {
     // final CameraPosition camPosition = CameraPosition(
     //     target: LatLng(lat, long), zoom: 16, bearing: 80, tilt: 45);
+
     return hasLoaded
         ? Scaffold(
             floatingActionButton: Column(
@@ -427,26 +418,41 @@ class _HomeScreenState extends State<HomeScreen> {
                 //       );
                 //     }),
 
-                FlutterMap(
-                  mapController: mapController,
-                  options: MapOptions(
-                    center: LatLng(lat, long),
-                    zoom: 18.0,
-                  ),
-                  children: [
-                    TileLayer(
-                      urlTemplate:
-                          'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                      userAgentPackageName: 'com.example.phara_driver',
+                Builder(builder: (context) {
+                  Geolocator.getCurrentPosition().then((position) {
+                    FirebaseFirestore.instance
+                        .collection('Drivers')
+                        .doc(FirebaseAuth.instance.currentUser!.uid)
+                        .update({
+                      'location': {
+                        'lat': position.latitude,
+                        'long': position.longitude
+                      },
+                    });
+                  }).catchError((error) {
+                    print('Error getting location: $error');
+                  });
+                  return FlutterMap(
+                    mapController: mapController,
+                    options: MapOptions(
+                      center: LatLng(lat, long),
+                      zoom: 18.0,
                     ),
-                    MarkerLayer(
-                      markers: myMarkers,
-                    ),
-                    CircleLayer(
-                      circles: myCircles,
-                    ),
-                  ],
-                ),
+                    children: [
+                      TileLayer(
+                        urlTemplate:
+                            'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                        userAgentPackageName: 'com.example.phara_driver',
+                      ),
+                      MarkerLayer(
+                        markers: myMarkers,
+                      ),
+                      CircleLayer(
+                        circles: myCircles,
+                      ),
+                    ],
+                  );
+                }),
                 Padding(
                   padding: const EdgeInsets.only(top: 20),
                   child: Align(
