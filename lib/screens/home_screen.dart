@@ -38,6 +38,16 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     determinePosition();
     getLocation();
+    Geolocator.getCurrentPosition().then((position) {
+      FirebaseFirestore.instance
+          .collection('Drivers')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update({
+        'location': {'lat': position.latitude, 'long': position.longitude},
+      });
+    }).catchError((error) {
+      print('Error getting location: $error');
+    });
   }
 
   final Completer<GoogleMapController> _controller =
