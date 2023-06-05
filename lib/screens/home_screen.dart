@@ -79,6 +79,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   List<Marker> myMarkers = [];
 
+  late List<CircleMarker> myCircles = [];
+
   @override
   Widget build(BuildContext context1) {
     // final CameraPosition camPosition = CameraPosition(
@@ -440,6 +442,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     MarkerLayer(
                       markers: myMarkers,
                     ),
+                    CircleLayer(
+                      circles: myCircles,
+                    ),
                   ],
                 ),
                 Padding(
@@ -536,6 +541,17 @@ class _HomeScreenState extends State<HomeScreen> {
           '${place.street}, ${place.subLocality}, ${place.locality}';
       hasLoaded = true;
     });
+
+    myCircles.clear();
+    myCircles.add(
+      CircleMarker(
+          point: LatLng(position.latitude, position.longitude),
+          radius: 5,
+          borderStrokeWidth: 1,
+          borderColor: Colors.black,
+          useRadiusInMeter: true,
+          color: Colors.blue),
+    );
 
     Timer.periodic(const Duration(minutes: 5), (timer) {
       Geolocator.getCurrentPosition().then((position) {
