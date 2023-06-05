@@ -61,6 +61,8 @@ dependencies:
   custom_map_markers:
   flutter_spinkit:
   avatar_glow:
+  huawei_map:
+  flutter_map:
 
 dev_dependencies:
   flutter_test:

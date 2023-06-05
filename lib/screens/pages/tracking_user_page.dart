@@ -2,12 +2,13 @@ import 'dart:async';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+// import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart' as loc;
 import 'package:phara_driver/screens/home_screen.dart';
 import 'package:phara_driver/utils/const.dart';
 import 'package:phara_driver/widgets/button_widget.dart';
-
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 import '../../plugins/my_location.dart';
 import '../../utils/colors.dart';
 import '../../utils/keys.dart';
@@ -46,32 +47,42 @@ class _TrackingOfUserPageState extends State<TrackingOfUserPage> {
 
   bool passengerOnBoard = false;
 
-  GoogleMapController? mapController;
+  // GoogleMapController? mapController;
 
   Set<Marker> markers = {};
 
-  final Completer<GoogleMapController> _controller =
-      Completer<GoogleMapController>();
+  // final Completer<GoogleMapController> _controller =
+  //     Completer<GoogleMapController>();
 
   late double lat = 0;
   late double long = 0;
 
+  final mapController = MapController();
+
+  late Marker myMarkers;
+
+  late List<CircleMarker> myCircles = [];
+
+  late Polyline myPoly;
+
   @override
   Widget build(BuildContext context) {
-    final CameraPosition camPosition = CameraPosition(
-        target: LatLng(lat, long), zoom: 16, bearing: 45, tilt: 40);
+    // final CameraPosition camPosition = CameraPosition(
+    //     target: LatLng(lat, long), zoom: 16, bearing: 45, tilt: 40);
     return Scaffold(
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 75),
         child: FloatingActionButton(
             backgroundColor: Colors.white,
             onPressed: (() {
-              mapController?.animateCamera(CameraUpdate.newCameraPosition(
-                  CameraPosition(
-                      bearing: 45,
-                      tilt: 40,
-                      target: LatLng(lat, long),
-                      zoom: 16)));
+              // mapController?.animateCamera(CameraUpdate.newCameraPosition(
+              //     CameraPosition(
+              //         bearing: 45,
+              //         tilt: 40,
+              //         target: LatLng(lat, long),
+              //         zoom: 16)));
+
+              mapController.move(LatLng(lat, long), 18);
             }),
             child: const Icon(
               Icons.my_location_rounded,
@@ -142,23 +153,47 @@ class _TrackingOfUserPageState extends State<TrackingOfUserPage> {
       body: hasLoaded
           ? Stack(
               children: [
-                GoogleMap(
-                  polylines: {_poly},
-                  zoomControlsEnabled: false,
-                  buildingsEnabled: true,
-                  compassEnabled: true,
-                  myLocationButtonEnabled: false,
-                  myLocationEnabled: true,
-                  markers: markers,
-                  mapType: MapType.normal,
-                  initialCameraPosition: camPosition,
-                  onMapCreated: (GoogleMapController controller) {
-                    _controller.complete(controller);
+                // GoogleMap(
+                //   polylines: {_poly},
+                //   zoomControlsEnabled: false,
+                //   buildingsEnabled: true,
+                //   compassEnabled: true,
+                //   myLocationButtonEnabled: false,
+                //   myLocationEnabled: true,
+                //   markers: markers,
+                //   mapType: MapType.normal,
+                //   initialCameraPosition: camPosition,
+                //   onMapCreated: (GoogleMapController controller) {
+                //     _controller.complete(controller);
 
-                    setState(() {
-                      mapController = controller;
-                    });
-                  },
+                //     setState(() {
+                //       mapController = controller;
+                //     });
+                //   },
+                // ),
+
+                FlutterMap(
+                  mapController: mapController,
+                  options: MapOptions(
+                    center: LatLng(lat, long),
+                    zoom: 18.0,
+                  ),
+                  children: [
+                    TileLayer(
+                      urlTemplate:
+                          'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                      userAgentPackageName: 'com.example.phara_driver',
+                    ),
+                    MarkerLayer(
+                      markers: [myMarkers],
+                    ),
+                    PolylineLayer(
+                      polylines: [myPoly],
+                    ),
+                    CircleLayer(
+                      circles: myCircles,
+                    ),
+                  ],
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 20),
@@ -170,7 +205,7 @@ class _TrackingOfUserPageState extends State<TrackingOfUserPage> {
                         borderRadius: BorderRadius.circular(50),
                       ),
                       height: 50,
-                      width: passengerOnBoard ? 250 : 200,
+                      width: 250,
                       child: Center(
                         child: passengerOnBoard
                             ? Padding(
@@ -178,17 +213,21 @@ class _TrackingOfUserPageState extends State<TrackingOfUserPage> {
                                     const EdgeInsets.only(left: 10, right: 10),
                                 child: TextRegular(
                                     text: passengerOnBoard
-                                        ? 'To: ${widget.tripDetails['destination']}'
-                                        : 'Passenger is waiting',
-                                    fontSize: passengerOnBoard ? 12 : 18,
+                                        ? widget.tripDetails['destination']
+                                        : widget.tripDetails['origin'],
+                                    fontSize: 14,
                                     color: Colors.white),
                               )
-                            : TextRegular(
-                                text: passengerOnBoard
-                                    ? 'To: ${widget.tripDetails['destination']}'
-                                    : 'Passenger is waiting',
-                                fontSize: passengerOnBoard ? 12 : 18,
-                                color: Colors.white),
+                            : Padding(
+                                padding:
+                                    const EdgeInsets.only(left: 10, right: 10),
+                                child: TextRegular(
+                                    text: passengerOnBoard
+                                        ? widget.tripDetails['destination']
+                                        : widget.tripDetails['origin'],
+                                    fontSize: 14,
+                                    color: Colors.white),
+                              ),
                       ),
                     ),
                   ),
@@ -284,6 +323,16 @@ class _TrackingOfUserPageState extends State<TrackingOfUserPage> {
   getDrivers() async {
     Geolocator.getCurrentPosition().then((position) {
       onboard(position);
+      myCircles.clear();
+      myCircles.add(
+        CircleMarker(
+            point: LatLng(position.latitude, position.longitude),
+            radius: 5,
+            borderStrokeWidth: 1,
+            borderColor: Colors.black,
+            useRadiusInMeter: true,
+            color: Colors.blue),
+      );
     }).catchError((error) {
       print('Error getting location: $error');
     });
@@ -294,20 +343,67 @@ class _TrackingOfUserPageState extends State<TrackingOfUserPage> {
   }
 
   onboard(position) async {
-    Marker driverMarker = Marker(
-        markerId: const MarkerId('destination'),
-        infoWindow: InfoWindow(
-          title: passengerOnBoard
-              ? widget.tripDetails['destination']
-              : widget.tripDetails['origin'],
-          snippet: 'Your destination',
+    myMarkers = Marker(
+      point: passengerOnBoard == false
+          ? LatLng(widget.tripDetails['originCoordinates']['lat'],
+              widget.tripDetails['originCoordinates']['long'])
+          : LatLng(widget.tripDetails['destinationCoordinates']['lat'],
+              widget.tripDetails['destinationCoordinates']['long']),
+      width: 80,
+      height: 80,
+      builder: (context) => IconButton(
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: TextBold(
+                    text: 'Your destination',
+                    fontSize: 18,
+                    color: Colors.black),
+                content: TextRegular(
+                    text: passengerOnBoard
+                        ? widget.tripDetails['destination']
+                        : widget.tripDetails['origin'],
+                    fontSize: 14,
+                    color: Colors.grey),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: TextRegular(
+                      text: 'Close',
+                      fontSize: 18,
+                      color: Colors.black,
+                    ),
+                  ),
+                ],
+              );
+            },
+          );
+        },
+        icon: const Icon(
+          Icons.location_on_rounded,
+          size: 48,
         ),
-        icon: BitmapDescriptor.defaultMarker,
-        position: passengerOnBoard == false
-            ? LatLng(widget.tripDetails['originCoordinates']['lat'],
-                widget.tripDetails['originCoordinates']['long'])
-            : LatLng(widget.tripDetails['destinationCoordinates']['lat'],
-                widget.tripDetails['destinationCoordinates']['long']));
+      ),
+    );
+
+    // Marker driverMarker = Marker(
+    //     markerId: const MarkerId('destination'),
+    //     infoWindow: InfoWindow(
+    //       title: passengerOnBoard
+    //           ? widget.tripDetails['destination']
+    //           : widget.tripDetails['origin'],
+    //       snippet: 'Your destination',
+    //     ),
+    //     icon: BitmapDescriptor.defaultMarker,
+    //     position: passengerOnBoard == false
+    //         ? LatLng(widget.tripDetails['originCoordinates']['lat'],
+    //             widget.tripDetails['originCoordinates']['long'])
+    //         : LatLng(widget.tripDetails['destinationCoordinates']['lat'],
+    //             widget.tripDetails['destinationCoordinates']['long']));
 
     Geolocator.getCurrentPosition().then(
       (value) async {
@@ -326,19 +422,29 @@ class _TrackingOfUserPageState extends State<TrackingOfUserPage> {
               .toList();
         }
         setState(() {
-          _poly = Polyline(
-              color: passengerOnBoard == false ? Colors.red : Colors.blue,
-              polylineId: const PolylineId('route'),
-              points: polylineCoordinates,
-              width: 4);
-          markers.add(driverMarker);
+          // _poly = Polyline(
+          //     color: passengerOnBoard == false ? Colors.red : Colors.blue,
+          //     polylineId: const PolylineId('route'),
+          //     points: polylineCoordinates,
+          //     width: 4);
+
+          myPoly = Polyline(
+            strokeWidth: 5,
+            isDotted: true,
+            useStrokeWidthInMeter: true,
+            points: polylineCoordinates,
+            color: passengerOnBoard == false ? Colors.red : Colors.blue,
+          );
+          // markers.add(driverMarker);
         });
-        mapController?.animateCamera(CameraUpdate.newCameraPosition(
-            CameraPosition(
-                bearing: 45,
-                tilt: 40,
-                target: LatLng(position.latitude, position.longitude),
-                zoom: 18)));
+        // mapController?.animateCamera(CameraUpdate.newCameraPosition(
+        //     CameraPosition(
+        //         bearing: 45,
+        //         tilt: 40,
+        //         target: LatLng(position.latitude, position.longitude),
+        //         zoom: 18)));
+
+        mapController.move(LatLng(position.latitude, position.longitude), 18);
       },
     );
   }
@@ -348,6 +454,6 @@ class _TrackingOfUserPageState extends State<TrackingOfUserPage> {
     // TODO: implement dispose
     super.dispose();
 
-    mapController!.dispose();
+    mapController.dispose();
   }
 }

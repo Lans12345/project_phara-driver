@@ -6,10 +6,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:custom_map_markers/custom_map_markers.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
+
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 import 'package:intl/intl.dart';
 import 'package:phara_driver/screens/pages/delivery/delivery_page.dart';
 import 'package:phara_driver/screens/pages/messages_tab.dart';
@@ -21,7 +24,6 @@ import '../data/user_stream.dart';
 import '../plugins/my_location.dart';
 import '../utils/colors.dart';
 import '../widgets/button_widget.dart';
-import '../widgets/custom_marker.dart';
 import '../widgets/drawer_widget.dart';
 import '../widgets/text_widget.dart';
 
@@ -50,8 +52,8 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  final Completer<GoogleMapController> _controller =
-      Completer<GoogleMapController>();
+  // final Completer<GoogleMapController> _controller =
+  //     Completer<GoogleMapController>();
 
   late String currentAddress;
 
@@ -60,9 +62,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   var hasLoaded = false;
 
-  GoogleMapController? mapController;
+  // GoogleMapController? mapController;
 
-  Set<Marker> markers = {};
+  // Set<Marker> markers = {};
 
   var _value = false;
 
@@ -73,10 +75,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
   late final List<MarkerData> _customMarkers = [];
 
+  final mapController = MapController();
+
+  List<Marker> myMarkers = [];
+
   @override
   Widget build(BuildContext context1) {
-    final CameraPosition camPosition = CameraPosition(
-        target: LatLng(lat, long), zoom: 16, bearing: 80, tilt: 45);
+    // final CameraPosition camPosition = CameraPosition(
+    //     target: LatLng(lat, long), zoom: 16, bearing: 80, tilt: 45);
     return hasLoaded
         ? Scaffold(
             floatingActionButton: Column(
@@ -393,31 +399,49 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             body: Stack(
               children: [
-                CustomGoogleMapMarkerBuilder(
-                    screenshotDelay: const Duration(seconds: 5),
-                    customMarkers: _customMarkers,
-                    builder: (BuildContext context, Set<Marker>? markers1) {
-                      if (markers1 == null) {
-                        return Center(child: SpinKitPulse());
-                      }
-                      return GoogleMap(
-                        buildingsEnabled: true,
-                        compassEnabled: true,
-                        myLocationButtonEnabled: true,
-                        myLocationEnabled: true,
-                        markers: markers1,
-                        mapType: MapType.normal,
-                        zoomControlsEnabled: false,
-                        initialCameraPosition: camPosition,
-                        onMapCreated: (GoogleMapController controller) {
-                          _controller.complete(controller);
-                          setState(() {
-                            myLocationMarker(lat, long);
-                            mapController = controller;
-                          });
-                        },
-                      );
-                    }),
+                // CustomGoogleMapMarkerBuilder(
+                //     screenshotDelay: const Duration(seconds: 5),
+                //     customMarkers: _customMarkers,
+                //     builder: (BuildContext context, Set<Marker>? markers1) {
+                //       if (markers1 == null) {
+                //         return Center(child: SpinKitPulse());
+                //       }
+                //       return GoogleMap(
+                //         buildingsEnabled: true,
+                //         compassEnabled: true,
+                //         myLocationButtonEnabled: true,
+                //         myLocationEnabled: true,
+                //         markers: markers1,
+                //         mapType: MapType.normal,
+                //         zoomControlsEnabled: false,
+                //         initialCameraPosition: camPosition,
+                //         onMapCreated: (GoogleMapController controller) {
+                //           _controller.complete(controller);
+                //           setState(() {
+                //             myLocationMarker(lat, long);
+                //             mapController = controller;
+                //           });
+                //         },
+                //       );
+                //     }),
+
+                FlutterMap(
+                  mapController: mapController,
+                  options: MapOptions(
+                    center: LatLng(lat, long),
+                    zoom: 18.0,
+                  ),
+                  children: [
+                    TileLayer(
+                      urlTemplate:
+                          'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                      userAgentPackageName: 'com.example.phara_driver',
+                    ),
+                    MarkerLayer(
+                      markers: myMarkers,
+                    ),
+                  ],
+                ),
                 Padding(
                   padding: const EdgeInsets.only(top: 20),
                   child: Align(
@@ -484,17 +508,17 @@ class _HomeScreenState extends State<HomeScreen> {
           );
   }
 
-  myLocationMarker(double lat, double lang) async {
-    Marker mylocationMarker = Marker(
-        markerId: const MarkerId('currentLocation'),
-        infoWindow: const InfoWindow(
-          title: 'Your Current Location',
-        ),
-        icon: BitmapDescriptor.defaultMarker,
-        position: LatLng(lat, lang));
+  // myLocationMarker(double lat, double lang) async {
+  //   Marker mylocationMarker = Marker(
+  //       markerId: const MarkerId('currentLocation'),
+  //       infoWindow: const InfoWindow(
+  //         title: 'Your Current Location',
+  //       ),
+  //       icon: BitmapDescriptor.defaultMarker,
+  //       position: LatLng(lat, lang));
 
-    markers.add(mylocationMarker);
-  }
+  //   markers.add(mylocationMarker);
+  // }
 
   getLocation() async {
     Position position = await Geolocator.getCurrentPosition(
@@ -578,88 +602,155 @@ class _HomeScreenState extends State<HomeScreen> {
                                               Navigator.of(context).pop();
                                               Navigator.of(context).pop();
 
-                                              mapController?.animateCamera(
-                                                  CameraUpdate.newCameraPosition(
-                                                      CameraPosition(
-                                                          bearing: 45,
-                                                          tilt: 40,
-                                                          target: LatLng(
-                                                              data.docs[index][
-                                                                      'originCoordinates']
-                                                                  ['lat'],
-                                                              data.docs[index][
-                                                                      'originCoordinates']
-                                                                  ['long']),
-                                                          zoom: 16)));
-
                                               setState(() {
-                                                _customMarkers.add(MarkerData(
-                                                    marker: Marker(
-                                                        onTap: () {
-                                                          if (data.docs[index]
-                                                                  ['status'] ==
-                                                              'Rejected') {
-                                                            showToast(
-                                                                'The booking of this user was rejected! Cannot procceed');
-                                                          } else {
-                                                            showDialog(
-                                                                context:
-                                                                    context1,
-                                                                builder:
-                                                                    (context1) {
-                                                                  return AlertDialog(
-                                                                    content: Column(
-                                                                        mainAxisSize:
-                                                                            MainAxisSize.min,
-                                                                        children: [
-                                                                          Row(
-                                                                            children: [
-                                                                              CircleAvatar(
-                                                                                minRadius: 25,
-                                                                                maxRadius: 25,
-                                                                                backgroundImage: NetworkImage(data.docs[index]['userProfile']),
-                                                                              ),
-                                                                              const SizedBox(
-                                                                                width: 15,
-                                                                              ),
-                                                                              Column(
-                                                                                mainAxisAlignment: MainAxisAlignment.end,
-                                                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                                                children: [
-                                                                                  TextBold(text: 'Name: ${data.docs[index]['userName']}', fontSize: 14, color: Colors.black),
-                                                                                  SizedBox(
-                                                                                    width: 150,
-                                                                                    child: TextRegular(text: 'Destination: ${data.docs[index]['destination']}', fontSize: 11, color: grey),
-                                                                                  ),
-                                                                                  SizedBox(
-                                                                                    width: 150,
-                                                                                    child: TextRegular(text: 'Origin: ${data.docs[index]['origin']}', fontSize: 11, color: grey),
-                                                                                  ),
-                                                                                  const SizedBox(
-                                                                                    height: 5,
-                                                                                  ),
-                                                                                  TextBold(text: 'Fare: ₱${NumberFormat('#,##0.00', 'en_US').format(double.parse(data.docs[index]['fare']))}', fontSize: 12, color: Colors.green),
-                                                                                ],
-                                                                              ),
-                                                                            ],
-                                                                          ),
-                                                                        ]),
-                                                                    actions: [
-                                                                      TextButton(
+                                                myMarkers.add(
+                                                  Marker(
+                                                    point: LatLng(
+                                                        data.docs[index][
+                                                                'originCoordinates']
+                                                            ['lat'],
+                                                        data.docs[index][
+                                                                'originCoordinates']
+                                                            ['long']),
+                                                    width: 80,
+                                                    height: 80,
+                                                    builder: (context) =>
+                                                        GestureDetector(
+                                                      onTap: () {
+                                                        if (data.docs[index]
+                                                                ['status'] ==
+                                                            'Rejected') {
+                                                          showToast(
+                                                              'The booking of this user was rejected! Cannot procceed');
+                                                        } else {
+                                                          showDialog(
+                                                              context: context1,
+                                                              builder:
+                                                                  (context1) {
+                                                                return AlertDialog(
+                                                                  content: Column(
+                                                                      mainAxisSize:
+                                                                          MainAxisSize
+                                                                              .min,
+                                                                      children: [
+                                                                        Row(
+                                                                          children: [
+                                                                            CircleAvatar(
+                                                                              minRadius: 25,
+                                                                              maxRadius: 25,
+                                                                              backgroundImage: NetworkImage(data.docs[index]['userProfile']),
+                                                                            ),
+                                                                            const SizedBox(
+                                                                              width: 15,
+                                                                            ),
+                                                                            Column(
+                                                                              mainAxisAlignment: MainAxisAlignment.end,
+                                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                                              children: [
+                                                                                TextBold(text: 'Name: ${data.docs[index]['userName']}', fontSize: 14, color: Colors.black),
+                                                                                SizedBox(
+                                                                                  width: 150,
+                                                                                  child: TextRegular(text: 'Destination: ${data.docs[index]['destination']}', fontSize: 11, color: grey),
+                                                                                ),
+                                                                                SizedBox(
+                                                                                  width: 150,
+                                                                                  child: TextRegular(text: 'Origin: ${data.docs[index]['origin']}', fontSize: 11, color: grey),
+                                                                                ),
+                                                                                const SizedBox(
+                                                                                  height: 5,
+                                                                                ),
+                                                                                TextBold(text: 'Fare: ₱${NumberFormat('#,##0.00', 'en_US').format(double.parse(data.docs[index]['fare']))}', fontSize: 12, color: Colors.green),
+                                                                              ],
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ]),
+                                                                  actions: [
+                                                                    TextButton(
+                                                                      onPressed:
+                                                                          () async {
+                                                                        Navigator.pop(
+                                                                            context1);
+                                                                        setState(
+                                                                            () {
+                                                                          myMarkers
+                                                                              .clear();
+                                                                        });
+                                                                        await FirebaseFirestore
+                                                                            .instance
+                                                                            .collection(
+                                                                                'Bookings')
+                                                                            .doc(data
+                                                                                .docs[
+                                                                                    index]
+                                                                                .id)
+                                                                            .update({
+                                                                          'status':
+                                                                              'Rejected'
+                                                                        });
+                                                                        await FirebaseFirestore
+                                                                            .instance
+                                                                            .collection('Users')
+                                                                            .doc(data.docs[index]['userId'])
+                                                                            .update({
+                                                                          'notif':
+                                                                              FieldValue.arrayUnion([
+                                                                            {
+                                                                              'notif': 'Youre booking was rejected!',
+                                                                              'read': false,
+                                                                              'date': DateTime.now(),
+                                                                            }
+                                                                          ]),
+                                                                        });
+
+                                                                        mapController.move(
+                                                                            LatLng(data.docs[index]['originCoordinates']['lat'],
+                                                                                data.docs[index]['originCoordinates']['long']),
+                                                                            18);
+                                                                      },
+                                                                      child: TextRegular(
+                                                                          text:
+                                                                              'Reject Booking',
+                                                                          fontSize:
+                                                                              12,
+                                                                          color:
+                                                                              Colors.red),
+                                                                    ),
+                                                                    ButtonWidget(
+                                                                        opacity:
+                                                                            1,
+                                                                        color: Colors
+                                                                            .green,
+                                                                        radius:
+                                                                            5,
+                                                                        fontSize:
+                                                                            14,
+                                                                        width:
+                                                                            100,
+                                                                        height:
+                                                                            30,
+                                                                        label:
+                                                                            'Accept Booking',
                                                                         onPressed:
                                                                             () async {
-                                                                          Navigator.pop(
-                                                                              context1);
-                                                                          setState(
-                                                                              () {
-                                                                            markers.removeWhere((element) =>
-                                                                                element.markerId ==
-                                                                                data.docs[index]['userName']);
+                                                                          Navigator.of(context1)
+                                                                              .pushReplacement(MaterialPageRoute(builder: (context1) => TrackingOfUserPage(tripDetails: data.docs[index])));
+                                                                          await FirebaseFirestore
+                                                                              .instance
+                                                                              .collection(
+                                                                                  'Drivers')
+                                                                              .doc(FirebaseAuth
+                                                                                  .instance.currentUser!.uid)
+                                                                              .update({
+                                                                            'isActive':
+                                                                                false
                                                                           });
+
                                                                           await FirebaseFirestore.instance.collection('Bookings').doc(data.docs[index].id).update({
                                                                             'status':
-                                                                                'Rejected'
+                                                                                'Accepted'
                                                                           });
+
                                                                           await FirebaseFirestore
                                                                               .instance
                                                                               .collection('Users')
@@ -668,98 +759,238 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                             'notif':
                                                                                 FieldValue.arrayUnion([
                                                                               {
-                                                                                'notif': 'Youre booking was rejected!',
+                                                                                'notif': 'Youre booking was accepted! Driver on the way',
                                                                                 'read': false,
                                                                                 'date': DateTime.now(),
                                                                               }
                                                                             ]),
                                                                           });
+                                                                          await FirebaseFirestore
+                                                                              .instance
+                                                                              .collection('Drivers')
+                                                                              .doc(data.docs[index]['driverId'])
+                                                                              .update({
+                                                                            'history':
+                                                                                FieldValue.arrayUnion([
+                                                                              {
+                                                                                'date': DateTime.now(),
+                                                                                'destination': data.docs[index]['destination'],
+                                                                                'distance': data.docs[index]['distance'],
+                                                                                'fare': data.docs[index]['fare'],
+                                                                                'origin': data.docs[index]['origin'],
+                                                                              }
+                                                                            ]),
+                                                                          });
 
-                                                                          mapController?.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
-                                                                              bearing: 45,
-                                                                              tilt: 40,
-                                                                              target: LatLng(lat, long),
-                                                                              zoom: 16)));
-                                                                        },
-                                                                        child: TextRegular(
-                                                                            text:
-                                                                                'Reject Booking',
-                                                                            fontSize:
-                                                                                12,
-                                                                            color:
-                                                                                Colors.red),
-                                                                      ),
-                                                                      ButtonWidget(
-                                                                          opacity:
-                                                                              1,
-                                                                          color: Colors
-                                                                              .green,
-                                                                          radius:
-                                                                              5,
-                                                                          fontSize:
-                                                                              14,
-                                                                          width:
-                                                                              100,
-                                                                          height:
-                                                                              30,
-                                                                          label:
-                                                                              'Accept Booking',
-                                                                          onPressed:
-                                                                              () async {
-                                                                            Navigator.of(context1).pushReplacement(MaterialPageRoute(builder: (context1) => TrackingOfUserPage(tripDetails: data.docs[index])));
-                                                                            await FirebaseFirestore.instance.collection('Drivers').doc(FirebaseAuth.instance.currentUser!.uid).update({
-                                                                              'isActive': false
-                                                                            });
-
-                                                                            await FirebaseFirestore.instance.collection('Bookings').doc(data.docs[index].id).update({
-                                                                              'status': 'Accepted'
-                                                                            });
-
-                                                                            await FirebaseFirestore.instance.collection('Users').doc(data.docs[index]['userId']).update({
-                                                                              'notif': FieldValue.arrayUnion([
-                                                                                {
-                                                                                  'notif': 'Youre booking was accepted! Driver on the way',
-                                                                                  'read': false,
-                                                                                  'date': DateTime.now(),
-                                                                                }
-                                                                              ]),
-                                                                            });
-                                                                            await FirebaseFirestore.instance.collection('Drivers').doc(data.docs[index]['driverId']).update({
-                                                                              'history': FieldValue.arrayUnion([
-                                                                                {
-                                                                                  'date': DateTime.now(),
-                                                                                  'destination': data.docs[index]['destination'],
-                                                                                  'distance': data.docs[index]['distance'],
-                                                                                  'fare': data.docs[index]['fare'],
-                                                                                  'origin': data.docs[index]['origin'],
-                                                                                }
-                                                                              ]),
-                                                                            });
-
-                                                                            // To Do: Booking - to show booking modal sheet
-                                                                          })
-                                                                    ],
-                                                                  );
-                                                                });
-                                                          }
-                                                        },
-                                                        markerId: MarkerId(
-                                                            data.docs[index]
-                                                                ['userName']),
-                                                        icon: BitmapDescriptor
-                                                            .defaultMarker,
-                                                        position: LatLng(
-                                                            data.docs[index][
-                                                                    'originCoordinates']
-                                                                ['lat'],
-                                                            data.docs[index]
-                                                                    ['originCoordinates']
-                                                                ['long'])),
-                                                    child: CustomMarker(
-                                                        data.docs[index]
-                                                            ['userProfile'],
-                                                        Colors.black)));
+                                                                          // To Do: Booking - to show booking modal sheet
+                                                                        })
+                                                                  ],
+                                                                );
+                                                              });
+                                                        }
+                                                      },
+                                                      child: const Icon(
+                                                        Icons
+                                                            .location_on_rounded,
+                                                        size: 48,
+                                                        color: Colors.black,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                );
                                               });
+                                              mapController.move(
+                                                  LatLng(
+                                                      data.docs[index][
+                                                              'originCoordinates']
+                                                          ['lat'],
+                                                      data.docs[index][
+                                                              'originCoordinates']
+                                                          ['long']),
+                                                  18);
+
+                                              // mapController?.animateCamera(
+                                              //     CameraUpdate.newCameraPosition(
+                                              //         CameraPosition(
+                                              //             bearing: 45,
+                                              //             tilt: 40,
+                                              //             target: LatLng(
+                                              //                 data.docs[index][
+                                              //                         'originCoordinates']
+                                              //                     ['lat'],
+                                              //                 data.docs[index][
+                                              //                         'originCoordinates']
+                                              //                     ['long']),
+                                              //             zoom: 16)));
+
+                                              // setState(() {
+                                              //   _customMarkers.add(MarkerData(
+                                              //       marker: Marker(
+                                              //           onTap: () {
+                                              //             if (data.docs[index]
+                                              //                     ['status'] ==
+                                              //                 'Rejected') {
+                                              //               showToast(
+                                              //                   'The booking of this user was rejected! Cannot procceed');
+                                              //             } else {
+                                              //               showDialog(
+                                              //                   context:
+                                              //                       context1,
+                                              //                   builder:
+                                              //                       (context1) {
+                                              //                     return AlertDialog(
+                                              //                       content: Column(
+                                              //                           mainAxisSize:
+                                              //                               MainAxisSize.min,
+                                              //                           children: [
+                                              //                             Row(
+                                              //                               children: [
+                                              //                                 CircleAvatar(
+                                              //                                   minRadius: 25,
+                                              //                                   maxRadius: 25,
+                                              //                                   backgroundImage: NetworkImage(data.docs[index]['userProfile']),
+                                              //                                 ),
+                                              //                                 const SizedBox(
+                                              //                                   width: 15,
+                                              //                                 ),
+                                              //                                 Column(
+                                              //                                   mainAxisAlignment: MainAxisAlignment.end,
+                                              //                                   crossAxisAlignment: CrossAxisAlignment.start,
+                                              //                                   children: [
+                                              //                                     TextBold(text: 'Name: ${data.docs[index]['userName']}', fontSize: 14, color: Colors.black),
+                                              //                                     SizedBox(
+                                              //                                       width: 150,
+                                              //                                       child: TextRegular(text: 'Destination: ${data.docs[index]['destination']}', fontSize: 11, color: grey),
+                                              //                                     ),
+                                              //                                     SizedBox(
+                                              //                                       width: 150,
+                                              //                                       child: TextRegular(text: 'Origin: ${data.docs[index]['origin']}', fontSize: 11, color: grey),
+                                              //                                     ),
+                                              //                                     const SizedBox(
+                                              //                                       height: 5,
+                                              //                                     ),
+                                              //                                     TextBold(text: 'Fare: ₱${NumberFormat('#,##0.00', 'en_US').format(double.parse(data.docs[index]['fare']))}', fontSize: 12, color: Colors.green),
+                                              //                                   ],
+                                              //                                 ),
+                                              //                               ],
+                                              //                             ),
+                                              //                           ]),
+                                              //                       actions: [
+                                              //                         TextButton(
+                                              //                           onPressed:
+                                              //                               () async {
+                                              //                             Navigator.pop(
+                                              //                                 context1);
+                                              //                             setState(
+                                              //                                 () {
+                                              //                               markers.removeWhere((element) =>
+                                              //                                   element.markerId ==
+                                              //                                   data.docs[index]['userName']);
+                                              //                             });
+                                              //                             await FirebaseFirestore.instance.collection('Bookings').doc(data.docs[index].id).update({
+                                              //                               'status':
+                                              //                                   'Rejected'
+                                              //                             });
+                                              //                             await FirebaseFirestore
+                                              //                                 .instance
+                                              //                                 .collection('Users')
+                                              //                                 .doc(data.docs[index]['userId'])
+                                              //                                 .update({
+                                              //                               'notif':
+                                              //                                   FieldValue.arrayUnion([
+                                              //                                 {
+                                              //                                   'notif': 'Youre booking was rejected!',
+                                              //                                   'read': false,
+                                              //                                   'date': DateTime.now(),
+                                              //                                 }
+                                              //                               ]),
+                                              //                             });
+
+                                              //                             mapController?.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+                                              //                                 bearing: 45,
+                                              //                                 tilt: 40,
+                                              //                                 target: LatLng(lat, long),
+                                              //                                 zoom: 16)));
+                                              //                           },
+                                              //                           child: TextRegular(
+                                              //                               text:
+                                              //                                   'Reject Booking',
+                                              //                               fontSize:
+                                              //                                   12,
+                                              //                               color:
+                                              //                                   Colors.red),
+                                              //                         ),
+                                              //                         ButtonWidget(
+                                              //                             opacity:
+                                              //                                 1,
+                                              //                             color: Colors
+                                              //                                 .green,
+                                              //                             radius:
+                                              //                                 5,
+                                              //                             fontSize:
+                                              //                                 14,
+                                              //                             width:
+                                              //                                 100,
+                                              //                             height:
+                                              //                                 30,
+                                              //                             label:
+                                              //                                 'Accept Booking',
+                                              //                             onPressed:
+                                              //                                 () async {
+                                              //                               Navigator.of(context1).pushReplacement(MaterialPageRoute(builder: (context1) => TrackingOfUserPage(tripDetails: data.docs[index])));
+                                              //                               await FirebaseFirestore.instance.collection('Drivers').doc(FirebaseAuth.instance.currentUser!.uid).update({
+                                              //                                 'isActive': false
+                                              //                               });
+
+                                              //                               await FirebaseFirestore.instance.collection('Bookings').doc(data.docs[index].id).update({
+                                              //                                 'status': 'Accepted'
+                                              //                               });
+
+                                              //                               await FirebaseFirestore.instance.collection('Users').doc(data.docs[index]['userId']).update({
+                                              //                                 'notif': FieldValue.arrayUnion([
+                                              //                                   {
+                                              //                                     'notif': 'Youre booking was accepted! Driver on the way',
+                                              //                                     'read': false,
+                                              //                                     'date': DateTime.now(),
+                                              //                                   }
+                                              //                                 ]),
+                                              //                               });
+                                              //                               await FirebaseFirestore.instance.collection('Drivers').doc(data.docs[index]['driverId']).update({
+                                              //                                 'history': FieldValue.arrayUnion([
+                                              //                                   {
+                                              //                                     'date': DateTime.now(),
+                                              //                                     'destination': data.docs[index]['destination'],
+                                              //                                     'distance': data.docs[index]['distance'],
+                                              //                                     'fare': data.docs[index]['fare'],
+                                              //                                     'origin': data.docs[index]['origin'],
+                                              //                                   }
+                                              //                                 ]),
+                                              //                               });
+
+                                              //                               // To Do: Booking - to show booking modal sheet
+                                              //                             })
+                                              //                       ],
+                                              //                     );
+                                              //                   });
+                                              //             }
+                                              //           },
+                                              //           markerId: MarkerId(
+                                              //               data.docs[index]
+                                              //                   ['userName']),
+                                              //           icon: BitmapDescriptor
+                                              //               .defaultMarker,
+                                              //           position: LatLng(
+                                              //               data.docs[index][
+                                              //                       'originCoordinates']
+                                              //                   ['lat'],
+                                              //               data.docs[index]
+                                              //                       ['originCoordinates']
+                                              //                   ['long'])),
+                                              //       child: CustomMarker(
+                                              //           data.docs[index]
+                                              //               ['userProfile'],
+                                              //           Colors.black)));
+                                              // });
                                             },
                                             leading: TextRegular(
                                                 text: 'View on map',
@@ -915,7 +1146,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void dispose() {
-    mapController!.dispose();
+    // mapController!.dispose();
     // TODO: implement dispose
     super.dispose();
   }
