@@ -54,25 +54,25 @@ class DeliveryHistoryPage extends StatelessWidget {
                               child: TextBold(
                                   text:
                                       'To: ${newhistory[index]['destination']}',
-                                  fontSize: 14,
+                                  fontSize: 15,
                                   color: grey),
                             ),
                             SizedBox(
                               width: 150,
                               child: TextRegular(
                                   text: 'From: ${newhistory[index]['origin']}',
-                                  fontSize: 12,
+                                  fontSize: 15,
                                   color: grey),
                             ),
                             TextRegular(
                                 text: 'Fare: ₱${newhistory[index]['payment']}',
-                                fontSize: 12,
+                                fontSize: 15,
                                 color: grey),
                             TextRegular(
                                 text: DateFormat.yMMMd()
                                     .add_jm()
                                     .format(newhistory[index]['date'].toDate()),
-                                fontSize: 12,
+                                fontSize: 15,
                                 color: grey),
                           ],
                         ),

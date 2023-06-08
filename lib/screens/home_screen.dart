@@ -634,11 +634,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                                         data.docs[index][
                                                                 'originCoordinates']
                                                             ['long']),
-                                                    width: 80,
-                                                    height: 80,
                                                     builder: (context) =>
-                                                        GestureDetector(
-                                                      onTap: () {
+                                                        IconButton(
+                                                      onPressed: () {
                                                         if (data.docs[index]
                                                                 ['status'] ==
                                                             'Rejected') {
@@ -669,19 +667,19 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                               mainAxisAlignment: MainAxisAlignment.end,
                                                                               crossAxisAlignment: CrossAxisAlignment.start,
                                                                               children: [
-                                                                                TextBold(text: 'Name: ${data.docs[index]['userName']}', fontSize: 14, color: Colors.black),
+                                                                                TextBold(text: 'Name: ${data.docs[index]['userName']}', fontSize: 16, color: Colors.black),
                                                                                 SizedBox(
                                                                                   width: 150,
-                                                                                  child: TextRegular(text: 'Destination: ${data.docs[index]['destination']}', fontSize: 11, color: grey),
+                                                                                  child: TextRegular(text: 'Destination: ${data.docs[index]['destination']}', fontSize: 15, color: grey),
                                                                                 ),
                                                                                 SizedBox(
                                                                                   width: 150,
-                                                                                  child: TextRegular(text: 'Origin: ${data.docs[index]['origin']}', fontSize: 11, color: grey),
+                                                                                  child: TextRegular(text: 'Origin: ${data.docs[index]['origin']}', fontSize: 15, color: grey),
                                                                                 ),
                                                                                 const SizedBox(
                                                                                   height: 5,
                                                                                 ),
-                                                                                TextBold(text: 'Fare: ₱${NumberFormat('#,##0.00', 'en_US').format(double.parse(data.docs[index]['fare']))}', fontSize: 12, color: Colors.green),
+                                                                                TextBold(text: 'Fare: ₱${NumberFormat('#,##0.00', 'en_US').format(double.parse(data.docs[index]['fare']))}', fontSize: 15, color: Colors.green),
                                                                               ],
                                                                             ),
                                                                           ],
@@ -811,10 +809,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                                               });
                                                         }
                                                       },
-                                                      child: const Icon(
-                                                        Icons
-                                                            .location_on_rounded,
-                                                        size: 48,
+                                                      icon: const Icon(
+                                                        Icons.person,
+                                                        size: 55,
                                                         color: Colors.black,
                                                       ),
                                                     ),

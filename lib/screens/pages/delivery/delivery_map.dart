@@ -224,9 +224,55 @@ class DeliveryMapState extends State<DeliveryMap> {
                                     ),
                                     TextBold(
                                         text:
-                                            'Distance: ${widget.bookingData['distance']}km away',
+                                            'Distance: ${widget.bookingData['distance']} km away',
                                         fontSize: 18,
                                         color: grey),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    Container(
+                                      height: 35,
+                                      width: 300,
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(100)),
+                                      child: TextFormField(
+                                        enabled: false,
+                                        decoration: InputDecoration(
+                                          prefixIcon: const Icon(
+                                            Icons
+                                                .shopping_cart_checkout_outlined,
+                                            color: grey,
+                                          ),
+                                          fillColor: Colors.white,
+                                          filled: true,
+                                          enabledBorder: OutlineInputBorder(
+                                            borderSide: const BorderSide(
+                                                width: 1, color: grey),
+                                            borderRadius:
+                                                BorderRadius.circular(100),
+                                          ),
+                                          disabledBorder: OutlineInputBorder(
+                                            borderSide: const BorderSide(
+                                                width: 1, color: grey),
+                                            borderRadius:
+                                                BorderRadius.circular(100),
+                                          ),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderSide: const BorderSide(
+                                                width: 1, color: Colors.black),
+                                            borderRadius:
+                                                BorderRadius.circular(100),
+                                          ),
+                                          label: TextRegular(
+                                              text:
+                                                  'Item: ${widget.bookingData['item']}',
+                                              fontSize: 14,
+                                              color: Colors.black),
+                                          border: InputBorder.none,
+                                        ),
+                                      ),
+                                    ),
                                     const SizedBox(
                                       height: 10,
                                     ),

@@ -73,23 +73,23 @@ class DeliveryPage extends StatelessWidget {
                       ),
                       title: TextBold(
                           text: 'To: ${data.docs[index]['destination']}',
-                          fontSize: 14,
+                          fontSize: 15,
                           color: Colors.black),
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           TextRegular(
                               text: 'From: ${data.docs[index]['origin']}',
-                              fontSize: 12,
+                              fontSize: 15,
                               color: Colors.grey),
                           TextRegular(
                               text: 'Payment: ₱${data.docs[index]['fare']}',
-                              fontSize: 12,
+                              fontSize: 15,
                               color: Colors.grey),
                           TextRegular(
                               text: DateFormat.yMMMd().add_jm().format(
                                   data.docs[index]['dateTime'].toDate()),
-                              fontSize: 12,
+                              fontSize: 15,
                               color: Colors.grey),
                         ],
                       ),
