@@ -63,6 +63,7 @@ dependencies:
   avatar_glow:
   huawei_map:
   flutter_map:
+  url_launcher: ^6.1.11
 
 dev_dependencies:
   flutter_test:

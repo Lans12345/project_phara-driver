@@ -24,7 +24,8 @@ Future signup(name, number, address, email, vehicle, plateNumber) async {
     'deliveryHistory': [],
     'plateNumber': plateNumber,
     'feedbacks': [],
-    'type': 'motorcycle'
+    'type': 'motorcycle',
+    'comments': [],
   };
 
   await docUser.set(json);
