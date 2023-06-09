@@ -66,6 +66,7 @@ dependencies:
   url_launcher: ^6.1.11
   flutter_background_service:
   audioplayers:
+  flutter_inapp_notifications:
 
 dev_dependencies:
   flutter_test:

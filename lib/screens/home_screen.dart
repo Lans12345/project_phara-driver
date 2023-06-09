@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:badges/badges.dart' as b;
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -38,6 +39,19 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
+    FirebaseFirestore.instance
+        .collection('Drivers')
+        .where('id', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+        .snapshots()
+        .listen((event) async {
+      for (var element in event.docChanges) {
+        if (element.type == DocumentChangeType.modified) {
+          final player = AudioPlayer();
+          player.setVolume(1);
+          await player.play(AssetSource('music/sound.wav'));
+        }
+      }
+    });
     super.initState();
     determinePosition();
     getLocation();
