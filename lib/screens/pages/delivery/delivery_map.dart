@@ -126,6 +126,7 @@ class DeliveryMapState extends State<DeliveryMap> {
       point: LatLng(lat1, long1),
       builder: (context) => const Icon(
         Icons.location_on_rounded,
+        color: Colors.red,
         size: 42,
       ),
     ));
@@ -144,6 +145,7 @@ class DeliveryMapState extends State<DeliveryMap> {
       point: LatLng(lat1, long1),
       builder: (context) => const Icon(
         Icons.location_on_rounded,
+        color: Colors.red,
         size: 42,
       ),
     ));
