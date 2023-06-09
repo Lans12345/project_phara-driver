@@ -34,9 +34,10 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   @override
   void initState() {
+    WidgetsBinding.instance.addObserver(this);
     super.initState();
     determinePosition();
     getLocation();
@@ -321,7 +322,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   trailing: IconButton(
                                     onPressed: () async {
                                       await FirebaseFirestore.instance
-                                          .collection('Users')
+                                          .collection('Drivers')
                                           .doc(FirebaseAuth
                                               .instance.currentUser!.uid)
                                           .update({
@@ -1056,9 +1057,57 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+
+    if (state == AppLifecycleState.detached) {
+      FirebaseFirestore.instance
+          .collection('Drivers')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update({
+        'isActive': false,
+      });
+    }
+
+    if (state == AppLifecycleState.inactive) {
+      FirebaseFirestore.instance
+          .collection('Drivers')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update({
+        'isActive': false,
+      });
+    }
+
+    if (state == AppLifecycleState.paused) {
+      FirebaseFirestore.instance
+          .collection('Drivers')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update({
+        'isActive': false,
+      });
+    }
+
+    if (state == AppLifecycleState.resumed) {
+      FirebaseFirestore.instance
+          .collection('Drivers')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update({
+        'isActive': true,
+      });
+    }
+
+    /* if (isBackground) {
+      // service.stop();
+    } else {
+      // service.start();
+    }*/
+  }
+
+  @override
   void dispose() {
     // mapController!.dispose();
     // TODO: implement dispose
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 }
