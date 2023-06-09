@@ -159,7 +159,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           backgroundColor: Colors.white,
                           onPressed: (() {
                             if (data.docs.isNotEmpty) {
-                              showBookingData(data, context1);
+                              showBookingData(data);
                             } else {
                               showToast('No bookings');
                             }
@@ -481,7 +481,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ? GestureDetector(
                                   onTap: () {
                                     if (data.docs.isNotEmpty) {
-                                      showBookingData(data, context1);
+                                      showBookingData(data);
                                     }
                                   },
                                   child: Container(
@@ -573,7 +573,7 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  showBookingData(dynamic data, BuildContext context1) {
+  showBookingData(dynamic data) {
     showDialog(
         context: context,
         builder: (context) {
@@ -621,395 +621,287 @@ class _HomeScreenState extends State<HomeScreen> {
                                         children: [
                                           ListTile(
                                             onTap: () {
-                                              Navigator.of(context).pop();
-                                              Navigator.of(context).pop();
-
-                                              setState(() {
-                                                myMarkers.add(
-                                                  Marker(
-                                                    point: LatLng(
+                                              Navigator.pop(context);
+                                              Navigator.pop(context);
+                                              if (data.docs[index]['status'] ==
+                                                  'Rejected') {
+                                                showToast(
+                                                    'The booking of this user was rejected! Cannot procceed');
+                                              } else {
+                                                mapController.move(
+                                                    LatLng(
                                                         data.docs[index][
                                                                 'originCoordinates']
                                                             ['lat'],
                                                         data.docs[index][
                                                                 'originCoordinates']
                                                             ['long']),
-                                                    builder: (context) =>
-                                                        IconButton(
-                                                      onPressed: () {
-                                                        if (data.docs[index]
-                                                                ['status'] ==
-                                                            'Rejected') {
-                                                          showToast(
-                                                              'The booking of this user was rejected! Cannot procceed');
-                                                        } else {
-                                                          showDialog(
-                                                              context: context1,
-                                                              builder:
-                                                                  (context1) {
-                                                                return AlertDialog(
-                                                                  content: Column(
-                                                                      mainAxisSize:
-                                                                          MainAxisSize
-                                                                              .min,
-                                                                      children: [
-                                                                        Row(
-                                                                          children: [
-                                                                            CircleAvatar(
-                                                                              minRadius: 25,
-                                                                              maxRadius: 25,
-                                                                              backgroundImage: NetworkImage(data.docs[index]['userProfile']),
-                                                                            ),
-                                                                            const SizedBox(
-                                                                              width: 15,
-                                                                            ),
-                                                                            Column(
-                                                                              mainAxisAlignment: MainAxisAlignment.end,
-                                                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                                                              children: [
-                                                                                TextBold(text: 'Name: ${data.docs[index]['userName']}', fontSize: 16, color: Colors.black),
-                                                                                SizedBox(
-                                                                                  width: 150,
-                                                                                  child: TextRegular(text: 'Destination: ${data.docs[index]['destination']}', fontSize: 15, color: grey),
-                                                                                ),
-                                                                                SizedBox(
-                                                                                  width: 150,
-                                                                                  child: TextRegular(text: 'Origin: ${data.docs[index]['origin']}', fontSize: 15, color: grey),
-                                                                                ),
-                                                                                const SizedBox(
-                                                                                  height: 5,
-                                                                                ),
-                                                                                TextBold(text: 'Fare: ₱${NumberFormat('#,##0.00', 'en_US').format(double.parse(data.docs[index]['fare']))}', fontSize: 15, color: Colors.green),
-                                                                              ],
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      ]),
-                                                                  actions: [
-                                                                    TextButton(
-                                                                      onPressed:
-                                                                          () async {
-                                                                        Navigator.pop(
-                                                                            context1);
-                                                                        setState(
-                                                                            () {
-                                                                          myMarkers
-                                                                              .clear();
-                                                                        });
-                                                                        await FirebaseFirestore
-                                                                            .instance
-                                                                            .collection(
-                                                                                'Bookings')
-                                                                            .doc(data
-                                                                                .docs[
-                                                                                    index]
-                                                                                .id)
-                                                                            .update({
-                                                                          'status':
-                                                                              'Rejected'
-                                                                        });
-                                                                        await FirebaseFirestore
-                                                                            .instance
-                                                                            .collection('Users')
-                                                                            .doc(data.docs[index]['userId'])
-                                                                            .update({
-                                                                          'notif':
-                                                                              FieldValue.arrayUnion([
-                                                                            {
-                                                                              'notif': 'Youre booking was rejected!',
-                                                                              'read': false,
-                                                                              'date': DateTime.now(),
-                                                                            }
-                                                                          ]),
-                                                                        });
-
-                                                                        mapController.move(
-                                                                            LatLng(data.docs[index]['originCoordinates']['lat'],
-                                                                                data.docs[index]['originCoordinates']['long']),
-                                                                            18);
-                                                                      },
-                                                                      child: TextRegular(
-                                                                          text:
-                                                                              'Reject Booking',
-                                                                          fontSize:
-                                                                              12,
-                                                                          color:
-                                                                              Colors.red),
-                                                                    ),
-                                                                    ButtonWidget(
-                                                                        opacity:
-                                                                            1,
-                                                                        color: Colors
-                                                                            .green,
-                                                                        radius:
-                                                                            5,
-                                                                        fontSize:
-                                                                            14,
-                                                                        width:
-                                                                            100,
-                                                                        height:
-                                                                            30,
-                                                                        label:
-                                                                            'Accept Booking',
-                                                                        onPressed:
-                                                                            () async {
-                                                                          Navigator.of(context1)
-                                                                              .pushReplacement(MaterialPageRoute(builder: (context1) => TrackingOfUserPage(tripDetails: data.docs[index])));
-                                                                          await FirebaseFirestore
-                                                                              .instance
-                                                                              .collection(
-                                                                                  'Drivers')
-                                                                              .doc(FirebaseAuth
-                                                                                  .instance.currentUser!.uid)
-                                                                              .update({
-                                                                            'isActive':
-                                                                                false
-                                                                          });
-
-                                                                          await FirebaseFirestore.instance.collection('Bookings').doc(data.docs[index].id).update({
-                                                                            'status':
-                                                                                'Accepted'
-                                                                          });
-
-                                                                          await FirebaseFirestore
-                                                                              .instance
-                                                                              .collection('Users')
-                                                                              .doc(data.docs[index]['userId'])
-                                                                              .update({
-                                                                            'notif':
-                                                                                FieldValue.arrayUnion([
-                                                                              {
-                                                                                'notif': 'Youre booking was accepted! Driver on the way',
-                                                                                'read': false,
-                                                                                'date': DateTime.now(),
-                                                                              }
-                                                                            ]),
-                                                                          });
-                                                                          await FirebaseFirestore
-                                                                              .instance
-                                                                              .collection('Drivers')
-                                                                              .doc(data.docs[index]['driverId'])
-                                                                              .update({
-                                                                            'history':
-                                                                                FieldValue.arrayUnion([
-                                                                              {
-                                                                                'date': DateTime.now(),
-                                                                                'destination': data.docs[index]['destination'],
-                                                                                'distance': data.docs[index]['distance'],
-                                                                                'fare': data.docs[index]['fare'],
-                                                                                'origin': data.docs[index]['origin'],
-                                                                              }
-                                                                            ]),
-                                                                          });
-
-                                                                          // To Do: Booking - to show booking modal sheet
-                                                                        })
-                                                                  ],
-                                                                );
-                                                              });
-                                                        }
-                                                      },
-                                                      icon: const Icon(
-                                                        Icons.person,
-                                                        size: 55,
-                                                        color: Colors.black,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                );
-                                              });
-                                              mapController.move(
-                                                  LatLng(
+                                                    18);
+                                                myMarkers.add(Marker(
+                                                  point: LatLng(
                                                       data.docs[index][
                                                               'originCoordinates']
                                                           ['lat'],
                                                       data.docs[index][
                                                               'originCoordinates']
                                                           ['long']),
-                                                  18);
+                                                  builder: (context) =>
+                                                      const Icon(
+                                                    Icons
+                                                        .location_history_rounded,
+                                                    size: 42,
+                                                  ),
+                                                ));
+                                                showDialog(
+                                                    context: context,
+                                                    builder: (context1) {
+                                                      return AlertDialog(
+                                                        content: Column(
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .min,
+                                                            children: [
+                                                              Row(
+                                                                children: [
+                                                                  CircleAvatar(
+                                                                    minRadius:
+                                                                        25,
+                                                                    maxRadius:
+                                                                        25,
+                                                                    backgroundImage:
+                                                                        NetworkImage(data.docs[index]
+                                                                            [
+                                                                            'userProfile']),
+                                                                  ),
+                                                                  const SizedBox(
+                                                                    width: 15,
+                                                                  ),
+                                                                  Column(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .end,
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .start,
+                                                                    children: [
+                                                                      TextBold(
+                                                                          text:
+                                                                              'Name: ${data.docs[index]['userName']}',
+                                                                          fontSize:
+                                                                              16,
+                                                                          color:
+                                                                              Colors.black),
+                                                                      SizedBox(
+                                                                        width:
+                                                                            150,
+                                                                        child: TextRegular(
+                                                                            text:
+                                                                                'Destination: ${data.docs[index]['destination']}',
+                                                                            fontSize:
+                                                                                15,
+                                                                            color:
+                                                                                grey),
+                                                                      ),
+                                                                      SizedBox(
+                                                                        width:
+                                                                            150,
+                                                                        child: TextRegular(
+                                                                            text:
+                                                                                'Origin: ${data.docs[index]['origin']}',
+                                                                            fontSize:
+                                                                                15,
+                                                                            color:
+                                                                                grey),
+                                                                      ),
+                                                                      const SizedBox(
+                                                                        height:
+                                                                            5,
+                                                                      ),
+                                                                      TextBold(
+                                                                          text:
+                                                                              'Fare: ₱${NumberFormat('#,##0.00', 'en_US').format(double.parse(data.docs[index]['fare']))}',
+                                                                          fontSize:
+                                                                              15,
+                                                                          color:
+                                                                              Colors.green),
+                                                                    ],
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ]),
+                                                        actions: [
+                                                          TextButton(
+                                                            onPressed:
+                                                                () async {
+                                                              Navigator.pop(
+                                                                  context1);
+                                                              setState(() {
+                                                                myMarkers
+                                                                    .clear();
+                                                              });
+                                                              await FirebaseFirestore
+                                                                  .instance
+                                                                  .collection(
+                                                                      'Bookings')
+                                                                  .doc(data
+                                                                      .docs[
+                                                                          index]
+                                                                      .id)
+                                                                  .update({
+                                                                'status':
+                                                                    'Rejected'
+                                                              });
+                                                              await FirebaseFirestore
+                                                                  .instance
+                                                                  .collection(
+                                                                      'Users')
+                                                                  .doc(data.docs[
+                                                                          index]
+                                                                      [
+                                                                      'userId'])
+                                                                  .update({
+                                                                'notif': FieldValue
+                                                                    .arrayUnion([
+                                                                  {
+                                                                    'notif':
+                                                                        'Youre booking was rejected!',
+                                                                    'read':
+                                                                        false,
+                                                                    'date':
+                                                                        DateTime
+                                                                            .now(),
+                                                                  }
+                                                                ]),
+                                                              });
 
-                                              // mapController?.animateCamera(
-                                              //     CameraUpdate.newCameraPosition(
-                                              //         CameraPosition(
-                                              //             bearing: 45,
-                                              //             tilt: 40,
-                                              //             target: LatLng(
-                                              //                 data.docs[index][
-                                              //                         'originCoordinates']
-                                              //                     ['lat'],
-                                              //                 data.docs[index][
-                                              //                         'originCoordinates']
-                                              //                     ['long']),
-                                              //             zoom: 16)));
+                                                              mapController.move(
+                                                                  LatLng(
+                                                                      data.docs[index]
+                                                                              [
+                                                                              'originCoordinates']
+                                                                          [
+                                                                          'lat'],
+                                                                      data.docs[index]
+                                                                              [
+                                                                              'originCoordinates']
+                                                                          [
+                                                                          'long']),
+                                                                  18);
+                                                            },
+                                                            child: TextRegular(
+                                                                text:
+                                                                    'Reject Booking',
+                                                                fontSize: 12,
+                                                                color:
+                                                                    Colors.red),
+                                                          ),
+                                                          ButtonWidget(
+                                                              opacity: 1,
+                                                              color:
+                                                                  Colors.green,
+                                                              radius: 5,
+                                                              fontSize: 14,
+                                                              width: 100,
+                                                              height: 30,
+                                                              label:
+                                                                  'Accept Booking',
+                                                              onPressed:
+                                                                  () async {
+                                                                Navigator.of(
+                                                                        context1)
+                                                                    .pushReplacement(MaterialPageRoute(
+                                                                        builder:
+                                                                            (context1) =>
+                                                                                TrackingOfUserPage(tripDetails: data.docs[index])));
+                                                                await FirebaseFirestore
+                                                                    .instance
+                                                                    .collection(
+                                                                        'Drivers')
+                                                                    .doc(FirebaseAuth
+                                                                        .instance
+                                                                        .currentUser!
+                                                                        .uid)
+                                                                    .update({
+                                                                  'isActive':
+                                                                      false
+                                                                });
 
-                                              // setState(() {
-                                              //   _customMarkers.add(MarkerData(
-                                              //       marker: Marker(
-                                              //           onTap: () {
-                                              //             if (data.docs[index]
-                                              //                     ['status'] ==
-                                              //                 'Rejected') {
-                                              //               showToast(
-                                              //                   'The booking of this user was rejected! Cannot procceed');
-                                              //             } else {
-                                              //               showDialog(
-                                              //                   context:
-                                              //                       context1,
-                                              //                   builder:
-                                              //                       (context1) {
-                                              //                     return AlertDialog(
-                                              //                       content: Column(
-                                              //                           mainAxisSize:
-                                              //                               MainAxisSize.min,
-                                              //                           children: [
-                                              //                             Row(
-                                              //                               children: [
-                                              //                                 CircleAvatar(
-                                              //                                   minRadius: 25,
-                                              //                                   maxRadius: 25,
-                                              //                                   backgroundImage: NetworkImage(data.docs[index]['userProfile']),
-                                              //                                 ),
-                                              //                                 const SizedBox(
-                                              //                                   width: 15,
-                                              //                                 ),
-                                              //                                 Column(
-                                              //                                   mainAxisAlignment: MainAxisAlignment.end,
-                                              //                                   crossAxisAlignment: CrossAxisAlignment.start,
-                                              //                                   children: [
-                                              //                                     TextBold(text: 'Name: ${data.docs[index]['userName']}', fontSize: 14, color: Colors.black),
-                                              //                                     SizedBox(
-                                              //                                       width: 150,
-                                              //                                       child: TextRegular(text: 'Destination: ${data.docs[index]['destination']}', fontSize: 11, color: grey),
-                                              //                                     ),
-                                              //                                     SizedBox(
-                                              //                                       width: 150,
-                                              //                                       child: TextRegular(text: 'Origin: ${data.docs[index]['origin']}', fontSize: 11, color: grey),
-                                              //                                     ),
-                                              //                                     const SizedBox(
-                                              //                                       height: 5,
-                                              //                                     ),
-                                              //                                     TextBold(text: 'Fare: ₱${NumberFormat('#,##0.00', 'en_US').format(double.parse(data.docs[index]['fare']))}', fontSize: 12, color: Colors.green),
-                                              //                                   ],
-                                              //                                 ),
-                                              //                               ],
-                                              //                             ),
-                                              //                           ]),
-                                              //                       actions: [
-                                              //                         TextButton(
-                                              //                           onPressed:
-                                              //                               () async {
-                                              //                             Navigator.pop(
-                                              //                                 context1);
-                                              //                             setState(
-                                              //                                 () {
-                                              //                               markers.removeWhere((element) =>
-                                              //                                   element.markerId ==
-                                              //                                   data.docs[index]['userName']);
-                                              //                             });
-                                              //                             await FirebaseFirestore.instance.collection('Bookings').doc(data.docs[index].id).update({
-                                              //                               'status':
-                                              //                                   'Rejected'
-                                              //                             });
-                                              //                             await FirebaseFirestore
-                                              //                                 .instance
-                                              //                                 .collection('Users')
-                                              //                                 .doc(data.docs[index]['userId'])
-                                              //                                 .update({
-                                              //                               'notif':
-                                              //                                   FieldValue.arrayUnion([
-                                              //                                 {
-                                              //                                   'notif': 'Youre booking was rejected!',
-                                              //                                   'read': false,
-                                              //                                   'date': DateTime.now(),
-                                              //                                 }
-                                              //                               ]),
-                                              //                             });
+                                                                await FirebaseFirestore
+                                                                    .instance
+                                                                    .collection(
+                                                                        'Bookings')
+                                                                    .doc(data
+                                                                        .docs[
+                                                                            index]
+                                                                        .id)
+                                                                    .update({
+                                                                  'status':
+                                                                      'Accepted'
+                                                                });
 
-                                              //                             mapController?.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
-                                              //                                 bearing: 45,
-                                              //                                 tilt: 40,
-                                              //                                 target: LatLng(lat, long),
-                                              //                                 zoom: 16)));
-                                              //                           },
-                                              //                           child: TextRegular(
-                                              //                               text:
-                                              //                                   'Reject Booking',
-                                              //                               fontSize:
-                                              //                                   12,
-                                              //                               color:
-                                              //                                   Colors.red),
-                                              //                         ),
-                                              //                         ButtonWidget(
-                                              //                             opacity:
-                                              //                                 1,
-                                              //                             color: Colors
-                                              //                                 .green,
-                                              //                             radius:
-                                              //                                 5,
-                                              //                             fontSize:
-                                              //                                 14,
-                                              //                             width:
-                                              //                                 100,
-                                              //                             height:
-                                              //                                 30,
-                                              //                             label:
-                                              //                                 'Accept Booking',
-                                              //                             onPressed:
-                                              //                                 () async {
-                                              //                               Navigator.of(context1).pushReplacement(MaterialPageRoute(builder: (context1) => TrackingOfUserPage(tripDetails: data.docs[index])));
-                                              //                               await FirebaseFirestore.instance.collection('Drivers').doc(FirebaseAuth.instance.currentUser!.uid).update({
-                                              //                                 'isActive': false
-                                              //                               });
+                                                                await FirebaseFirestore
+                                                                    .instance
+                                                                    .collection(
+                                                                        'Users')
+                                                                    .doc(data.docs[
+                                                                            index]
+                                                                        [
+                                                                        'userId'])
+                                                                    .update({
+                                                                  'notif':
+                                                                      FieldValue
+                                                                          .arrayUnion([
+                                                                    {
+                                                                      'notif':
+                                                                          'Youre booking was accepted! Driver on the way',
+                                                                      'read':
+                                                                          false,
+                                                                      'date': DateTime
+                                                                          .now(),
+                                                                    }
+                                                                  ]),
+                                                                });
+                                                                await FirebaseFirestore
+                                                                    .instance
+                                                                    .collection(
+                                                                        'Drivers')
+                                                                    .doc(data.docs[
+                                                                            index]
+                                                                        [
+                                                                        'driverId'])
+                                                                    .update({
+                                                                  'history':
+                                                                      FieldValue
+                                                                          .arrayUnion([
+                                                                    {
+                                                                      'date': DateTime
+                                                                          .now(),
+                                                                      'destination':
+                                                                          data.docs[index]
+                                                                              [
+                                                                              'destination'],
+                                                                      'distance':
+                                                                          data.docs[index]
+                                                                              [
+                                                                              'distance'],
+                                                                      'fare': data
+                                                                              .docs[index]
+                                                                          [
+                                                                          'fare'],
+                                                                      'origin':
+                                                                          data.docs[index]
+                                                                              [
+                                                                              'origin'],
+                                                                    }
+                                                                  ]),
+                                                                });
 
-                                              //                               await FirebaseFirestore.instance.collection('Bookings').doc(data.docs[index].id).update({
-                                              //                                 'status': 'Accepted'
-                                              //                               });
-
-                                              //                               await FirebaseFirestore.instance.collection('Users').doc(data.docs[index]['userId']).update({
-                                              //                                 'notif': FieldValue.arrayUnion([
-                                              //                                   {
-                                              //                                     'notif': 'Youre booking was accepted! Driver on the way',
-                                              //                                     'read': false,
-                                              //                                     'date': DateTime.now(),
-                                              //                                   }
-                                              //                                 ]),
-                                              //                               });
-                                              //                               await FirebaseFirestore.instance.collection('Drivers').doc(data.docs[index]['driverId']).update({
-                                              //                                 'history': FieldValue.arrayUnion([
-                                              //                                   {
-                                              //                                     'date': DateTime.now(),
-                                              //                                     'destination': data.docs[index]['destination'],
-                                              //                                     'distance': data.docs[index]['distance'],
-                                              //                                     'fare': data.docs[index]['fare'],
-                                              //                                     'origin': data.docs[index]['origin'],
-                                              //                                   }
-                                              //                                 ]),
-                                              //                               });
-
-                                              //                               // To Do: Booking - to show booking modal sheet
-                                              //                             })
-                                              //                       ],
-                                              //                     );
-                                              //                   });
-                                              //             }
-                                              //           },
-                                              //           markerId: MarkerId(
-                                              //               data.docs[index]
-                                              //                   ['userName']),
-                                              //           icon: BitmapDescriptor
-                                              //               .defaultMarker,
-                                              //           position: LatLng(
-                                              //               data.docs[index][
-                                              //                       'originCoordinates']
-                                              //                   ['lat'],
-                                              //               data.docs[index]
-                                              //                       ['originCoordinates']
-                                              //                   ['long'])),
-                                              //       child: CustomMarker(
-                                              //           data.docs[index]
-                                              //               ['userProfile'],
-                                              //           Colors.black)));
-                                              // });
+                                                                // To Do: Booking - to show booking modal sheet
+                                                              })
+                                                        ],
+                                                      );
+                                                    });
+                                              }
                                             },
                                             leading: TextRegular(
                                                 text: 'View on map',
