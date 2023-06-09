@@ -2,10 +2,11 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:phara_driver/screens/pages/chat_page.dart';
 
 import '../../../utils/colors.dart';
@@ -48,18 +49,26 @@ class DeliveryMapState extends State<DeliveryMap> {
         });
 
         if (bookingAccepted == false) {
-          print('ypw');
           addPoly(
               LatLng(value.latitude, value.longitude),
               LatLng(widget.bookingData['originCoordinates']['lat'],
                   widget.bookingData['originCoordinates']['long']));
         } else {
-          print('hey');
           addPoly(
               LatLng(value.latitude, value.longitude),
               LatLng(widget.bookingData['destinationCoordinates']['lat'],
                   widget.bookingData['destinationCoordinates']['long']));
         }
+
+        myCircles.add(
+          CircleMarker(
+              point: LatLng(value.latitude, value.longitude),
+              radius: 5,
+              borderStrokeWidth: 1,
+              borderColor: Colors.black,
+              useRadiusInMeter: true,
+              color: Colors.red),
+        );
       });
     });
   }
@@ -69,14 +78,14 @@ class DeliveryMapState extends State<DeliveryMap> {
   bool bookingAccepted2 = false;
   bool delivered = false;
 
-  final Completer<GoogleMapController> _controller =
-      Completer<GoogleMapController>();
+  // final Completer<GoogleMapController> _controller =
+  //     Completer<GoogleMapController>();
 
   double lat = 0;
   double long = 0;
   bool hasLoaded = false;
 
-  Set<Marker> markers = {};
+  // Set<Marker> markers = {};
 
   addPoly(LatLng coordinates1, LatLng coordinates2) async {
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
@@ -89,53 +98,79 @@ class DeliveryMapState extends State<DeliveryMap> {
           .toList();
     }
     setState(() {
-      _poly = Polyline(
-          color: Colors.red,
-          polylineId: const PolylineId('route'),
-          points: polylineCoordinates,
-          width: 4);
+      myPoly = Polyline(
+        strokeWidth: 5,
+        isDotted: true,
+        useStrokeWidthInMeter: true,
+        points: polylineCoordinates,
+        color: Colors.red,
+      );
     });
-    mapController!
-        .animateCamera(CameraUpdate.newLatLngZoom(coordinates1, 18.0));
+    // mapController.animateCamera(CameraUpdate.newLatLngZoom(coordinates1, 18.0));
+
+    mapController.move(coordinates1, 18);
   }
 
-  GoogleMapController? mapController;
+  // GoogleMapController? mapController;
 
   addMyMarker1(lat1, long1) async {
-    markers.add(Marker(
-        icon: BitmapDescriptor.defaultMarker,
-        markerId: const MarkerId("pickup"),
-        position: LatLng(lat1, long1),
-        infoWindow: InfoWindow(
-            title: 'Pick-up Location',
-            snippet: 'PU: ${widget.bookingData['origin']}')));
+    // markers.add(Marker(
+    //     icon: BitmapDescriptor.defaultMarker,
+    //     markerId: const MarkerId("pickup"),
+    //     position: LatLng(lat1, long1),
+    //     infoWindow: InfoWindow(
+    //         title: 'Pick-up Location',
+    //         snippet: 'PU: ${widget.bookingData['origin']}')));
+
+    myMarkers.add(Marker(
+      point: LatLng(lat1, long1),
+      builder: (context) => const Icon(
+        Icons.location_on_rounded,
+        size: 42,
+      ),
+    ));
   }
 
   addMyMarker12(lat1, long1) async {
-    markers.add(Marker(
-        icon: BitmapDescriptor.defaultMarker,
-        markerId: const MarkerId("dropOff"),
-        position: LatLng(lat1, long1),
-        infoWindow: InfoWindow(
-            title: 'Drop-off Location',
-            snippet: 'DO: ${widget.bookingData['destination']}')));
+    // markers.add(Marker(
+    //     icon: BitmapDescriptor.defaultMarker,
+    //     markerId: const MarkerId("dropOff"),
+    //     position: LatLng(lat1, long1),
+    //     infoWindow: InfoWindow(
+    //         title: 'Drop-off Location',
+    //         snippet: 'DO: ${widget.bookingData['destination']}')));
+
+    myMarkers.add(Marker(
+      point: LatLng(lat1, long1),
+      builder: (context) => const Icon(
+        Icons.location_on_rounded,
+        size: 42,
+      ),
+    ));
 
     setState(() {
       hasLoaded = true;
     });
   }
 
-  late Polyline _poly = const Polyline(polylineId: PolylineId('new'));
+  // late Polyline _poly = const Polyline(polylineId: PolylineId('new'));
 
   List<LatLng> polylineCoordinates = [];
   PolylinePoints polylinePoints = PolylinePoints();
+  final mapController = MapController();
+
+  List<Marker> myMarkers = [];
+
+  late List<CircleMarker> myCircles = [];
+
+  late Polyline myPoly;
 
   @override
   Widget build(BuildContext context) {
-    CameraPosition kGooglePlex = CameraPosition(
-      target: LatLng(lat, long),
-      zoom: 18,
-    );
+    // CameraPosition kGooglePlex = CameraPosition(
+    //   target: LatLng(lat, long),
+    //   zoom: 18,
+    // );
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -175,26 +210,66 @@ class DeliveryMapState extends State<DeliveryMap> {
       body: hasLoaded && lat != 0
           ? Stack(
               children: [
-                GoogleMap(
-                  polylines: {_poly},
-                  markers: markers,
-                  mapToolbarEnabled: false,
-                  zoomControlsEnabled: false,
-                  buildingsEnabled: true,
-                  compassEnabled: true,
-                  myLocationButtonEnabled: true,
-                  myLocationEnabled: true,
-                  mapType: MapType.normal,
-                  initialCameraPosition: kGooglePlex,
-                  onMapCreated: (GoogleMapController controller) {
-                    addPoly(
-                        LatLng(lat, long),
-                        LatLng(widget.bookingData['originCoordinates']['lat'],
-                            widget.bookingData['originCoordinates']['long']));
-                    mapController = controller;
-                    _controller.complete(controller);
-                  },
-                ),
+                // GoogleMap(
+                //   polylines: {_poly},
+                //   markers: markers,
+                //   mapToolbarEnabled: false,
+                //   zoomControlsEnabled: false,
+                //   buildingsEnabled: true,
+                //   compassEnabled: true,
+                //   myLocationButtonEnabled: true,
+                //   myLocationEnabled: true,
+                //   mapType: MapType.normal,
+                //   initialCameraPosition: kGooglePlex,
+                //   onMapCreated: (GoogleMapController controller) {
+                //     addPoly(
+                //         LatLng(lat, long),
+                //         LatLng(widget.bookingData['originCoordinates']['lat'],
+                //             widget.bookingData['originCoordinates']['long']));
+                //     mapController = controller;
+                //     _controller.complete(controller);
+                //   },
+                // ),
+                Builder(builder: (context) {
+                  Geolocator.getCurrentPosition().then((position) {
+                    FirebaseFirestore.instance
+                        .collection('Drivers')
+                        .doc(FirebaseAuth.instance.currentUser!.uid)
+                        .update({
+                      'location': {
+                        'lat': position.latitude,
+                        'long': position.longitude
+                      },
+                    });
+                  }).catchError((error) {
+                    print('Error getting location: $error');
+                  });
+                  return FlutterMap(
+                    mapController: mapController,
+                    options: MapOptions(
+                      center: LatLng(lat, long),
+                      zoom: 18.0,
+                    ),
+                    children: [
+                      TileLayer(
+                        urlTemplate:
+                            'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                        userAgentPackageName: 'com.example.phara_driver',
+                      ),
+                      MarkerLayer(
+                        markers: myMarkers,
+                      ),
+                      CircleLayer(
+                        circles: myCircles,
+                      ),
+                      myPoly != null
+                          ? PolylineLayer(
+                              polylines: [myPoly],
+                            )
+                          : const SizedBox()
+                    ],
+                  );
+                }),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
                   child: DraggableScrollableSheet(
@@ -784,7 +859,7 @@ class DeliveryMapState extends State<DeliveryMap> {
 
   @override
   void dispose() {
-    mapController!.dispose();
+    mapController.dispose();
     super.dispose();
   }
 }
