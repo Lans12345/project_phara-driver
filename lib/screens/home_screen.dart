@@ -4,7 +4,6 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:badges/badges.dart' as b;
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:custom_map_markers/custom_map_markers.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -55,6 +54,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     super.initState();
     determinePosition();
     getLocation();
+    getDrivers();
   }
 
   // final Completer<GoogleMapController> _controller =
@@ -78,8 +78,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       .doc(FirebaseAuth.instance.currentUser!.uid)
       .snapshots();
 
-  late final List<MarkerData> _customMarkers = [];
-
   final mapController = MapController();
 
   List<Marker> myMarkers = [];
@@ -91,7 +89,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     // final CameraPosition camPosition = CameraPosition(
     //     target: LatLng(lat, long), zoom: 16, bearing: 80, tilt: 45);
 
-    return hasLoaded
+    return hasLoaded && lat != 0
         ? Scaffold(
             floatingActionButton: Column(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -560,7 +558,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       long = position.longitude;
       currentAddress =
           '${place.street}, ${place.subLocality}, ${place.locality}';
-      hasLoaded = true;
     });
 
     myCircles.clear();
@@ -1115,6 +1112,29 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     } else {
       // service.start();
     }*/
+  }
+
+  getDrivers() {
+    FirebaseFirestore.instance
+        .collection('Drivers')
+        .get()
+        .then((QuerySnapshot querySnapshot) async {
+      for (var doc in querySnapshot.docs) {
+        setState(() {
+          myMarkers.add(Marker(
+            point: LatLng(doc['location']['lat'], doc['location']['long']),
+            builder: (context) => const Icon(
+              Icons.location_history_rounded,
+              size: 42,
+            ),
+          ));
+        });
+      }
+    });
+
+    setState(() {
+      hasLoaded = true;
+    });
   }
 
   @override

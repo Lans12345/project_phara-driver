@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 
 import '../plugins/my_location.dart';
 import '../utils/colors.dart';
-import '../widgets/text_widget.dart';
 import 'auth/landing_screen.dart';
 import 'home_screen.dart';
 
@@ -54,10 +53,6 @@ class _SplashScreenState extends State<SplashScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              TextBold(text: 'Welcome', fontSize: 32, color: Colors.white),
-              const SizedBox(
-                height: 20,
-              ),
               Image.asset(
                 'assets/images/animation.gif',
                 width: 250,
