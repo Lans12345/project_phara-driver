@@ -67,6 +67,7 @@ dependencies:
   flutter_background_service:
   audioplayers:
   flutter_inapp_notifications:
+  flutter_overlay_window:
 
 dev_dependencies:
   flutter_test:
