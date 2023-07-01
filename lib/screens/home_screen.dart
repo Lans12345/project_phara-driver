@@ -7,6 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 import 'package:latlong2/latlong.dart';
 
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -37,6 +38,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   @override
   void initState() {
+    requestOverlay();
     WidgetsBinding.instance.addObserver(this);
     FirebaseFirestore.instance
         .collection('Drivers')
@@ -57,6 +59,15 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     getDrivers();
   }
 
+  requestOverlay() async {
+    print('get');
+    final bool status = await FlutterOverlayWindow.isPermissionGranted();
+    if (status) {
+      bool? req = await FlutterOverlayWindow.requestPermission();
+
+      print(req);
+    }
+  }
   // final Completer<GoogleMapController> _controller =
   //     Completer<GoogleMapController>();
 

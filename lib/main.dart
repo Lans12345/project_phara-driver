@@ -5,7 +5,7 @@ import 'package:phara_driver/screens/splash_screen.dart';
 
 import 'firebase_options.dart';
 
-void main() async {
+void overlayMain() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(
