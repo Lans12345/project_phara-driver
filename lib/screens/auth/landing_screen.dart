@@ -31,7 +31,7 @@ class _LandingScreenState extends State<LandingScreen> {
             color: grey,
             image: DecorationImage(
                 opacity: 150,
-                image: AssetImage('assets/images/background.png'),
+                image: AssetImage('assets/images/newimg.jpg'),
                 fit: BoxFit.cover)),
         child: SizedBox(
           width: double.infinity,
