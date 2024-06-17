@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:phara_driver/screens/terms_conditions_page.dart';
 
 import '../../services/signup.dart';
@@ -11,18 +12,42 @@ import '../../widgets/toast_widget.dart';
 import '../splashtohome_screen.dart';
 import 'login_screen.dart';
 
-class SignupScreen extends StatelessWidget {
+class SignupScreen extends StatefulWidget {
+  const SignupScreen({super.key});
+
+  @override
+  State<SignupScreen> createState() => _SignupScreenState();
+}
+
+class _SignupScreenState extends State<SignupScreen> {
   final emailController = TextEditingController();
+
   final passwordController = TextEditingController();
+
   final nameController = TextEditingController();
+
   final numberController = TextEditingController();
+
   final addressController = TextEditingController();
+
   final confirmPasswordController = TextEditingController();
-  final vehicleController = TextEditingController();
+
   final _formKey = GlobalKey<FormState>();
+
   final platenumberController = TextEditingController();
 
-  SignupScreen({super.key});
+  List<String> motorbikeBrands = [
+    'Honda',
+    'Yamaha',
+    'Suzuki',
+    'Kymco',
+    'Sym',
+    'Rusi',
+    'TVS',
+    'Kawasaki'
+  ];
+
+  String? selectedBrand;
 
   @override
   Widget build(BuildContext context) {
@@ -98,16 +123,40 @@ class SignupScreen extends StatelessWidget {
                   const SizedBox(
                     height: 10,
                   ),
-                  TextFieldWidget(
-                    inputType: TextInputType.streetAddress,
-                    label: 'Vehicle Model',
-                    controller: vehicleController,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter a vehicle model';
-                      }
-                      return null;
-                    },
+                  TextRegular(
+                      text: 'Vehicle Model', fontSize: 12, color: Colors.white),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    width: double.infinity,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: DropdownButton<String>(
+                        hint: const Text('Select a brand'),
+                        value: selectedBrand,
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            selectedBrand = newValue!;
+                          });
+                        },
+                        items: motorbikeBrands
+                            .map<DropdownMenuItem<String>>((String brand) {
+                          return DropdownMenuItem<String>(
+                            value: brand,
+                            child: Text(
+                              brand,
+                              style: const TextStyle(
+                                  color: Colors.black, fontFamily: 'Bold'),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ),
                   ),
                   const SizedBox(
                     height: 10,
@@ -262,13 +311,8 @@ class SignupScreen extends StatelessWidget {
           email: '${emailController.text}@driver.phara',
           password: passwordController.text);
 
-      signup(
-          nameController.text,
-          numberController.text,
-          addressController.text,
-          emailController.text,
-          vehicleController.text,
-          platenumberController.text);
+      signup(nameController.text, numberController.text, addressController.text,
+          emailController.text, selectedBrand, platenumberController.text);
       await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: '${emailController.text}@driver.phara',
           password: passwordController.text);
