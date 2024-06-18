@@ -1,8 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:phara_driver/screens/terms_conditions_page.dart';
-
+import 'package:geocoding/geocoding.dart';
+import 'package:google_maps_webservice/places.dart' as location;
+import 'package:google_api_headers/google_api_headers.dart';
+import 'package:phara_driver/utils/keys.dart';
 import '../../services/signup.dart';
 import '../../utils/colors.dart';
 import '../../widgets/button_widget.dart';
@@ -109,16 +113,46 @@ class _SignupScreenState extends State<SignupScreen> {
                   const SizedBox(
                     height: 10,
                   ),
-                  TextFieldWidget(
-                    inputType: TextInputType.streetAddress,
-                    label: 'Address',
-                    controller: addressController,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter an address';
-                      }
-                      return null;
+                  TextRegular(
+                      text: 'Address', fontSize: 12, color: Colors.white),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  GestureDetector(
+                    onTap: () async {
+                      searchAddress();
                     },
+                    child: Container(
+                      height: 65,
+                      width: double.infinity,
+                      decoration:
+                          BoxDecoration(borderRadius: BorderRadius.circular(5)),
+                      child: TextFormField(
+                        enabled: false,
+                        decoration: InputDecoration(
+                          fillColor: Colors.white,
+                          filled: true,
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(width: 1, color: grey),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          disabledBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(width: 1, color: grey),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide:
+                                const BorderSide(width: 1, color: Colors.black),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          label: TextRegular(
+                              text: addressController.text,
+                              fontSize: 14,
+                              color: Colors.black),
+                          border: InputBorder.none,
+                        ),
+                      ),
+                    ),
                   ),
                   const SizedBox(
                     height: 10,
@@ -332,5 +366,32 @@ class _SignupScreenState extends State<SignupScreen> {
     } on Exception catch (e) {
       showToast("An error occurred: $e");
     }
+  }
+
+  searchAddress() async {
+    location.Prediction? p = await PlacesAutocomplete.show(
+        mode: Mode.overlay,
+        context: context,
+        apiKey: kGoogleApiKey,
+        language: 'en',
+        strictbounds: false,
+        types: [""],
+        decoration: InputDecoration(
+            hintText: 'Search Pick-up Location',
+            focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20),
+                borderSide: const BorderSide(color: Colors.white))),
+        components: [location.Component(location.Component.country, "ph")]);
+
+    location.GoogleMapsPlaces places = location.GoogleMapsPlaces(
+        apiKey: kGoogleApiKey,
+        apiHeaders: await const GoogleApiHeaders().getHeaders());
+
+    location.PlacesDetailsResponse detail =
+        await places.getDetailsByPlaceId(p!.placeId!);
+
+    setState(() {
+      addressController.text = detail.result.name;
+    });
   }
 }
