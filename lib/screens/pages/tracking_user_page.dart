@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -266,6 +267,12 @@ class _TrackingOfUserPageState extends State<TrackingOfUserPage> {
                                         ),
                                         MaterialButton(
                                           onPressed: () async {
+                                            await FirebaseFirestore.instance
+                                                .collection('Bookings')
+                                                .doc(widget.tripDetails.id)
+                                                .update({
+                                              'status': 'Picked up',
+                                            });
                                             Navigator.of(context).pop();
                                             setState(() {
                                               passengerOnBoard = true;
