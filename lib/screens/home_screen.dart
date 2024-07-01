@@ -133,10 +133,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                             child: AvatarGlow(
                               animate: data.docs.isNotEmpty,
                               glowColor: Colors.amber,
-                              endRadius: 60.0,
                               duration: const Duration(milliseconds: 2000),
-                              repeatPauseDuration:
-                                  const Duration(milliseconds: 100),
                               repeat: true,
                               child: Icon(
                                 Icons.delivery_dining_outlined,
@@ -188,10 +185,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                             child: AvatarGlow(
                               animate: data.docs.isNotEmpty,
                               glowColor: Colors.amber,
-                              endRadius: 60.0,
                               duration: const Duration(milliseconds: 2000),
-                              repeatPauseDuration:
-                                  const Duration(milliseconds: 100),
                               repeat: true,
                               child: Icon(
                                 Icons.groups,
