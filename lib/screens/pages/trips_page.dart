@@ -2,12 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
-import '../../data/user_stream.dart';
-import '../../utils/colors.dart';
-import '../../widgets/appbar_widget.dart';
-import '../../widgets/drawer_widget.dart';
-import '../../widgets/text_widget.dart';
+import 'package:phara_driver/data/user_stream.dart';
+import 'package:phara_driver/utils/colors.dart';
+import 'package:phara_driver/widgets/appbar_widget.dart';
+import 'package:phara_driver/widgets/drawer_widget.dart';
+import 'package:phara_driver/widgets/text_widget.dart';
 
 class TripsPage extends StatelessWidget {
   const TripsPage({Key? key}) : super(key: key);
@@ -17,40 +16,45 @@ class TripsPage extends StatelessWidget {
     return Scaffold(
       drawer: const DrawerWidget(),
       appBar: AppbarWidget('Recent Trips'),
-      body: StreamBuilder<DocumentSnapshot>(
-          stream: FirebaseData().userData,
-          builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-            if (!snapshot.hasData) {
-              return const Center(child: Text('Loading'));
-            } else if (snapshot.hasError) {
-              return const Center(child: Text('Something went wrong'));
-            } else if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
+      body: StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection('History')
+              .where('driverid',
+                  isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+              .snapshots(),
+          builder:
+              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (snapshot.hasError) {
+              print('error');
+              return const Center(child: Text('Error'));
             }
-            dynamic data = snapshot.data;
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Padding(
+                padding: EdgeInsets.only(top: 50),
+                child: Center(
+                    child: CircularProgressIndicator(
+                  color: Colors.black,
+                )),
+              );
+            }
 
-            List history = data['history'];
-            List newhistory = history.reversed.toList();
+            final data = snapshot.requireData;
             return ListView.builder(
-                itemCount: newhistory.length,
+                itemCount: data.docs.length,
                 itemBuilder: ((context, index) {
                   return Padding(
                     padding: const EdgeInsets.all(10),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            color: grey.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Image.asset(
-                              'assets/images/rider.png',
-                              height: 100,
-                            ),
-                          ),
+                        CircleAvatar(
+                          minRadius: 37,
+                          maxRadius: 37,
+                          backgroundColor: Colors.black,
+                          child: TextBold(
+                              text: data.docs[index]['destination'][0],
+                              fontSize: 24,
+                              color: Colors.white),
                         ),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,68 +63,45 @@ class TripsPage extends StatelessWidget {
                               width: 150,
                               child: TextBold(
                                   text:
-                                      'To: ${newhistory[index]['destination']}',
-                                  fontSize: 15,
+                                      'To: ${data.docs[index]['destination']}',
+                                  fontSize: 14,
                                   color: grey),
                             ),
                             SizedBox(
                               width: 150,
                               child: TextRegular(
-                                  text: 'From: ${newhistory[index]['origin']}',
-                                  fontSize: 15,
+                                  text: 'From: ${data.docs[index]['origin']}',
+                                  fontSize: 12,
                                   color: grey),
                             ),
                             TextRegular(
                                 text:
-                                    'Distance: ${newhistory[index]['distance']}km',
-                                fontSize: 15,
+                                    'Distance: ${data.docs[index]['distance']}km',
+                                fontSize: 12,
                                 color: grey),
                             TextRegular(
-                                text: 'Fare: ₱${newhistory[index]['fare']}',
-                                fontSize: 15,
+                                text: 'Fare: ₱${data.docs[index]['fare']}',
+                                fontSize: 12,
                                 color: grey),
                             TextRegular(
                                 text: DateFormat.yMMMd()
                                     .add_jm()
-                                    .format(newhistory[index]['date'].toDate()),
-                                fontSize: 15,
+                                    .format(data.docs[index]['date'].toDate()),
+                                fontSize: 12,
                                 color: grey),
-                                StreamBuilder<DocumentSnapshot>(
-                                    stream: FirebaseFirestore.instance
-                                        .collection('Drivers')
-                                        .doc(FirebaseAuth.instance.currentUser!.uid)
-                                        .snapshots(),
-                                    builder: (context,
-                                        AsyncSnapshot<DocumentSnapshot>
-                                            snapshot) {
-                                      if (!snapshot.hasData) {
-                                        return const SizedBox();
-                                      } else if (snapshot.hasError) {
-                                        return const Center(
-                                            child:
-                                                Text('Something went wrong'));
-                                      } else if (snapshot.connectionState ==
-                                          ConnectionState.waiting) {
-                                        return const SizedBox();
-                                      }
-                                      dynamic driverData = snapshot.data;
-                                      return TextRegular(
-                                          text:
-                                              'Ratings: ${(driverData['stars'] / driverData['ratings'].length).toStringAsFixed(2)} ★',
-                                          fontSize: 12,
-                                          color: grey);
-                                    }),
+                            TextRegular(
+                                text:
+                                    'Ratings: ${data.docs[index]['rating']} ★',
+                                fontSize: 12,
+                                color: grey),
                           ],
                         ),
                         IconButton(
                           onPressed: (() async {
                             await FirebaseFirestore.instance
-                                .collection('Users')
-                                .doc(FirebaseAuth.instance.currentUser!.uid)
-                                .update({
-                              'history':
-                                  FieldValue.arrayRemove([newhistory[index]]),
-                            });
+                                .collection('History')
+                                .doc(data.docs[index].id)
+                                .delete();
                           }),
                           icon: const Icon(
                             Icons.delete_outline_rounded,
