@@ -26,7 +26,7 @@
     </intent>
     </queries>
    <application
-        android:label="PARA - Driver"
+        android:label="Pasada - Driver"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <service android:name="flutter.overlay.window.flutter_overlay_window.OverlayService" android:exported="false" />

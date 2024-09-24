@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'PARA',
+      title: 'Pasada',
       home: const SplashScreen(),
       builder: InAppNotifications.init(),
     );

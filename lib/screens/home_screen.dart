@@ -131,6 +131,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                             badgeStyle:
                                 b.BadgeStyle(badgeColor: Colors.amber[600]!),
                             child: AvatarGlow(
+                              endRadius: 5,
                               animate: data.docs.isNotEmpty,
                               glowColor: Colors.amber,
                               duration: const Duration(milliseconds: 2000),
@@ -183,6 +184,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                             badgeStyle:
                                 b.BadgeStyle(badgeColor: Colors.amber[600]!),
                             child: AvatarGlow(
+                              endRadius: 5,
                               animate: data.docs.isNotEmpty,
                               glowColor: Colors.amber,
                               duration: const Duration(milliseconds: 2000),
