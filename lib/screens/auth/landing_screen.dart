@@ -10,7 +10,7 @@ import '../../widgets/text_widget.dart';
 import 'login_screen.dart';
 
 class LandingScreen extends StatefulWidget {
-  const LandingScreen({Key? key}) : super(key: key);
+  const LandingScreen({super.key});
 
   @override
   State<LandingScreen> createState() => _LandingScreenState();
@@ -31,7 +31,7 @@ class _LandingScreenState extends State<LandingScreen> {
             color: grey,
             image: DecorationImage(
                 opacity: 150,
-                image: AssetImage('assets/images/newimg.jpg'),
+                image: AssetImage('assets/images/newimg.jfif'),
                 fit: BoxFit.cover)),
         child: SizedBox(
           width: double.infinity,
@@ -41,7 +41,7 @@ class _LandingScreenState extends State<LandingScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                TextBold(text: 'PARA', fontSize: 48, color: Colors.white),
+                TextBold(text: 'PASADA', fontSize: 48, color: Colors.white),
                 TextRegular(
                     text: 'Making your travels more easier',
                     fontSize: 15,

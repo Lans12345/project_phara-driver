@@ -6,7 +6,7 @@ import '../../widgets/drawer_widget.dart';
 import '../../widgets/text_widget.dart';
 
 class ContactusPage extends StatelessWidget {
-  const ContactusPage({Key? key}) : super(key: key);
+  const ContactusPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -103,8 +103,7 @@ class ContactusPage extends StatelessWidget {
                 SizedBox(
                   width: 200,
                   child: TextRegular(
-                      text:
-                          'Misamis Oriental, Cagayan De Oro City, Philippines, 9000',
+                      text: 'Province of Aurora, Philippines',
                       fontSize: 16,
                       color: grey),
                 ),
