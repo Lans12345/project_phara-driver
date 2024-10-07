@@ -9,7 +9,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(
-    name: 'project-phara',
+    name: 'pasada-e0b64',
     options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(const MyApp());
