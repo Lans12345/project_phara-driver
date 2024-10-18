@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
@@ -15,6 +16,11 @@ import '../../widgets/textfield_widget.dart';
 import '../../widgets/toast_widget.dart';
 import '../splashtohome_screen.dart';
 import 'login_screen.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:path/path.dart' as path;
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+import 'package:flutter/foundation.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -53,6 +59,72 @@ class _SignupScreenState extends State<SignupScreen> {
 
   String? selectedBrand;
 
+  late String fileName = '';
+
+  late File imageFile;
+
+  late String imageURL = '';
+
+  Future<void> uploadPicture(String inputSource) async {
+    final picker = ImagePicker();
+    XFile pickedImage;
+    try {
+      pickedImage = (await picker.pickImage(
+          source: inputSource == 'camera'
+              ? ImageSource.camera
+              : ImageSource.gallery,
+          maxWidth: 1920))!;
+
+      fileName = path.basename(pickedImage.path);
+      imageFile = File(pickedImage.path);
+
+      try {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) => const Padding(
+            padding: EdgeInsets.only(left: 30, right: 30),
+            child: AlertDialog(
+                title: Row(
+              children: [
+                CircularProgressIndicator(
+                  color: Colors.black,
+                ),
+                SizedBox(
+                  width: 20,
+                ),
+                Text(
+                  'Loading . . .',
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'QRegular'),
+                ),
+              ],
+            )),
+          ),
+        );
+
+        await firebase_storage.FirebaseStorage.instance
+            .ref('Drivers/$fileName')
+            .putFile(imageFile);
+        imageURL = await firebase_storage.FirebaseStorage.instance
+            .ref('Drivers/$fileName')
+            .getDownloadURL();
+
+        Navigator.of(context).pop();
+      } on firebase_storage.FirebaseException catch (error) {
+        if (kDebugMode) {
+          print(error);
+        }
+      }
+    } catch (err) {
+      if (kDebugMode) {
+        print(err);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -81,6 +153,21 @@ class _SignupScreenState extends State<SignupScreen> {
                       text: 'Signup', fontSize: 24, color: Colors.white),
                   const SizedBox(
                     height: 10,
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      uploadPicture('camera');
+                    },
+                    child: Center(
+                      child: CircleAvatar(
+                        minRadius: 50,
+                        maxRadius: 50,
+                        backgroundImage: NetworkImage(imageURL),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
                   ),
                   TextFieldWidget(
                     label: 'Name',
@@ -345,14 +432,20 @@ class _SignupScreenState extends State<SignupScreen> {
           email: '${emailController.text}@driver.phara',
           password: passwordController.text);
 
-      signup(nameController.text, numberController.text, addressController.text,
-          emailController.text, selectedBrand, platenumberController.text);
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: '${emailController.text}@driver.phara',
-          password: passwordController.text);
+      signup(
+          nameController.text,
+          numberController.text,
+          addressController.text,
+          emailController.text,
+          selectedBrand,
+          platenumberController.text,
+          imageURL);
+      // await FirebaseAuth.instance.signInWithEmailAndPassword(
+      //     email: '${emailController.text}@driver.phara',
+      //     password: passwordController.text);
       showToast("Registered Succesfully!");
       Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const SplashToHomeScreen()));
+          MaterialPageRoute(builder: (context) => LoginScreen()));
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         showToast('The password provided is too weak.');

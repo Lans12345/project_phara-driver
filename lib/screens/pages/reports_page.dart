@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:phara_driver/widgets/text_widget.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../../widgets/appbar_widget.dart';
 import '../../widgets/drawer_widget.dart';

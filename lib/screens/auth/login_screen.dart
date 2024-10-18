@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:phara_driver/screens/auth/signup_screen.dart';
@@ -132,11 +133,21 @@ class LoginScreen extends StatelessWidget {
 
   login(context) async {
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
+      final user = await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: '${emailController.text}@driver.phara',
           password: passwordController.text);
-      Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const SplashToHomeScreen()));
+
+      DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
+          .collection('Drivers')
+          .doc(user.user!.uid)
+          .get();
+
+      if (documentSnapshot['isVerified']) {
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (context) => const SplashToHomeScreen()));
+      } else {
+        showToast('Your account is not verified!');
+      }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         showToast("No user found with that username.");
